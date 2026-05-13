@@ -86,6 +86,7 @@ private:
 	using BitmapInfo = renderHelp::BitmapInfo;
 
 	BitmapInfo* m_pBoardBitmapInfo = nullptr;
+	BitmapInfo** m_pFruitBitmapInfoTable = nullptr;
 
 	// 퍼즐 게임 추가
 	Board* m_pBoard = nullptr;

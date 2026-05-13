@@ -12,12 +12,8 @@ namespace renderHelp
 
 enum class ObjectType
 {
-	PLAYER,
-	ENEMY,
-	BULLET,
-	ITEM,
-	BACKGROUND,
-	BOARD
+	BOARD,
+	FRUIT
 };
 
 constexpr int OBJECT_NAME_LEN_MAX = 15;

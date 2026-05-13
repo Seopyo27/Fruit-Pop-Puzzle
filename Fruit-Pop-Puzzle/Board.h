@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "Fruit.h"
 
 struct Point
 {
@@ -41,7 +42,9 @@ public:
 	int GetGridOffsetY() const;
 	int GetGridGap() const;
 
-	bool GetClickedCellIndex(Point clickPoint, Index& cellIndex);
+	bool GetClickedCellIndex(Point boardPos, Index& cellIndex);
+
+	Fruit* GetFruitAt(int row, int col);
 
 private:
 	int	m_boardWidth = 0; // 전체 이미지 너비
@@ -55,7 +58,6 @@ private:
 	int m_gridGap = 0; // 그리드 간격
 	int m_gridWidth = 0; // 그리드 너비
 	int m_gridHeight; // 그리드 높이
-public:
 
-
+	Fruit** m_fruitPtrTable = nullptr;
 };

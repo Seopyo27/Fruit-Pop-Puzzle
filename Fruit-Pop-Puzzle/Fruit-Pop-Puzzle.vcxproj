@@ -126,6 +126,7 @@
   <ItemGroup>
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="Fruit.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameTimer.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -137,6 +138,7 @@
   <ItemGroup>
     <ClInclude Include="Board.h" />
     <ClInclude Include="Collider.h" />
+    <ClInclude Include="Fruit.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameTimer.h" />
     <ClInclude Include="INC_Windows.h" />
@@ -146,6 +148,9 @@
     <ClInclude Include="Utillity.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Resource\apple.png" />
+    <Image Include="Resource\banana.png" />
+    <Image Include="Resource\grapes.png" />
     <Image Include="Resource\samplegrid.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

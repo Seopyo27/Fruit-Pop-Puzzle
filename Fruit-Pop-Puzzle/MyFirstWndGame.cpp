@@ -52,12 +52,19 @@ bool MyFirstWndGame::Initialize()
     // IDE 에서 인지하는 현재 경로와 실제 실행 파일을 바로 실행했을 때의 경로 기준이 달라요.
     m_pBoardBitmapInfo = renderHelp::CreateBitmapInfo(L"./Resource/samplegrid.png");
 
+    m_pFruitBitmapInfoTable = new BitmapInfo * [3];
+
+    m_pFruitBitmapInfoTable[0] = renderHelp::CreateBitmapInfo(L"./Resource/apple.png");
+    m_pFruitBitmapInfoTable[1] = renderHelp::CreateBitmapInfo(L"./Resource/banana.png");
+    m_pFruitBitmapInfoTable[3] = renderHelp::CreateBitmapInfo(L"./Resource/grapes.png");
+
 #pragma endregion
 
     // 리소스를 먼저 로드한 후에 세팅을 합니다.
 
 	// 보드 생성
     CreateBoard(800, 800, 94, 95, 6, 6, 102, 93, 6);
+    
 
     return true;
 
@@ -158,9 +165,9 @@ void MyFirstWndGame::CreateBoard(int boardWidth, int boardHeight, int cellWidth,
         gridOffsetY,
         gridGap
     };
+
    pNewBoard->InitBoard(layout);
   
-
    m_GameObjectPtrTable[0] = pNewBoard;
    m_GameObjectCount += 1;
 
@@ -271,7 +278,18 @@ void MyFirstWndGame::OnRButtonDown(int x, int y)
 {
     std::cout << '\n' << '\n' << '\n' << std::flush;
 	std::cout << __FUNCTION__ << std::endl;
-    std::cout << "mousePos: ( " << x << ", " << y << " )" << std::endl;
+    std::cout << "[ BOARD ]" << std::endl;
+    
+    for (int row = 0; row < m_pBoard->GetMaxRow(); row++)
+    {
+        for (int col = 0; col < m_pBoard->GetMaxCol(); col++)
+        {
+            Fruit* pFruit = m_pBoard->GetFruitAt(row, col);
+            if (pFruit == nullptr) continue;
+            std::cout << static_cast<int>(pFruit->GetFruitType());
+        }
+        std::cout << std::endl;
+    }
 }
 
 bool MyFirstWndGame::ConvertScreenToBoard(int mouseX, int mouseY, Point& boardPos)
