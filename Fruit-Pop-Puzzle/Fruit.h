@@ -5,14 +5,15 @@ enum class FruitType {
 	NONE = -1,
 	APPLE, // 0
 	BANANA, // 1
-	GRAPE, // 2
+	GRAPES, // 2
 	COUNT // 과일 종류의 개수를 파악하기 위한 용도
 };
 
 class Fruit : public GameObject
 {
 public:
-	Fruit(ObjectType type) : GameObject(type) {}
+	Fruit() : GameObject(ObjectType::FRUIT) {};
+
 	~Fruit() override = default;
 
 	int GetRow() const;

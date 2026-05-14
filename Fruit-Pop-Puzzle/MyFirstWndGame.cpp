@@ -56,7 +56,7 @@ bool MyFirstWndGame::Initialize()
 
     m_pFruitBitmapInfoTable[0] = renderHelp::CreateBitmapInfo(L"./Resource/apple.png");
     m_pFruitBitmapInfoTable[1] = renderHelp::CreateBitmapInfo(L"./Resource/banana.png");
-    m_pFruitBitmapInfoTable[3] = renderHelp::CreateBitmapInfo(L"./Resource/grapes.png");
+    m_pFruitBitmapInfoTable[2] = renderHelp::CreateBitmapInfo(L"./Resource/grapes.png");
 
 #pragma endregion
 
@@ -64,6 +64,15 @@ bool MyFirstWndGame::Initialize()
 
 	// 보드 생성
     CreateBoard(800, 800, 94, 95, 6, 6, 102, 93, 6);
+
+    // 과일 비트맵 테이블 보드에 설정
+    m_pBoard->SetPFruitBitmapInfoTable(m_pFruitBitmapInfoTable);
+
+    // 과일 초기 전체 생성
+    m_pBoard->InitAllFruit();
+
+    //클릭 포인터 생성
+    CreateClickPointer(80, 80);
     
 
     return true;
@@ -138,6 +147,8 @@ void MyFirstWndGame::LogicUpdate()
             m_GameObjectPtrTable[i]->Update(m_fDeltaTime);
         }
     }
+
+    LoopPuzzleGame();
 }
 
 void MyFirstWndGame::CreateBoard(int boardWidth, int boardHeight, int cellWidth, int cellHeight, int maxRow, int maxCol, int gridOffsetX, int gridOffsetY, int gridGap)
@@ -168,11 +179,28 @@ void MyFirstWndGame::CreateBoard(int boardWidth, int boardHeight, int cellWidth,
 
    pNewBoard->InitBoard(layout);
   
-   m_GameObjectPtrTable[0] = pNewBoard;
-   m_GameObjectCount += 1;
+   m_GameObjectPtrTable[m_GameObjectCount++] = pNewBoard;
 
    // 보드 인스턴스를 자주 사용하기위해 따로 포인터를 저장
    m_pBoard = pNewBoard;
+}
+
+void MyFirstWndGame::CreateClickPointer(int width, int height)
+{
+    GameObject* pNewClickPointer = new GameObject(ObjectType::POINTER);
+
+    pNewClickPointer->SetName("ClickPointer");
+    pNewClickPointer->SetPosition(0, 0);
+    pNewClickPointer->SetWidth(width);
+    pNewClickPointer->SetHeight(height);
+
+    pNewClickPointer->SetColliderBox(width, height);
+
+    pNewClickPointer->SetVisible(false);
+
+    m_GameObjectPtrTable[m_GameObjectCount++] = pNewClickPointer;
+
+    m_pClickPointer = pNewClickPointer;
 }
 
 
@@ -247,35 +275,16 @@ void MyFirstWndGame::OnMouseMove(int x, int y)
 
 void MyFirstWndGame::OnLButtonDown(int x, int y)
 {
-    std::cout << '\n' << '\n' << '\n' << std::flush;
-    std::cout << __FUNCTION__ << std::endl;
+    // 디버깅
+    PrintBoardClickDebug(x, y);
 
-    // 윈도우 좌표 마우스 위치 출력
-    std::cout << "mousePos: ( " << x << ", " << y << " )" << std::endl;
-
-    Point boardPos = { 0, 0 };
-    // 보드를 클릭했으면 mousePos -> boardPos 변환 후 저장
-    if (!ConvertScreenToBoard(x, y, boardPos))
-    {
-        std::cout << "보드밖 클릭" << std::endl;
-        return;
-    }
-    // 보드 좌표 클릭 위치 출력
-    std::cout << "boardPos: ( " << boardPos.x << ", " << boardPos.y << " )" << std::endl;
-
-    Index cellIndex = { -1, -1 };
-    // 셀을 클릭했으면 cellIndex에 인덱스 저장
-    if (!(m_pBoard->GetClickedCellIndex(boardPos, cellIndex)))
-    {
-        std::cout << "보드안 셀 밖 클릭" << std::endl;
-        return;
-    }
-    // 셀 인덱스 출력
-    std::cout << "cellIndex: ( " << cellIndex.row << ", " << cellIndex.col << " )" << std::endl;
+    m_leftClickedMousePos.x = x;
+    m_leftClickedMousePos.y = y;
 }
 
 void MyFirstWndGame::OnRButtonDown(int x, int y)
 {
+    /// 디버깅용
     std::cout << '\n' << '\n' << '\n' << std::flush;
 	std::cout << __FUNCTION__ << std::endl;
     std::cout << "[ BOARD ]" << std::endl;
@@ -284,7 +293,7 @@ void MyFirstWndGame::OnRButtonDown(int x, int y)
     {
         for (int col = 0; col < m_pBoard->GetMaxCol(); col++)
         {
-            Fruit* pFruit = m_pBoard->GetFruitAt(row, col);
+            Fruit* pFruit = m_pBoard->GetFruitAt({ row, col });
             if (pFruit == nullptr) continue;
             std::cout << static_cast<int>(pFruit->GetFruitType());
         }
@@ -292,7 +301,7 @@ void MyFirstWndGame::OnRButtonDown(int x, int y)
     }
 }
 
-bool MyFirstWndGame::ConvertScreenToBoard(int mouseX, int mouseY, Point& boardPos)
+bool MyFirstWndGame::ConvertScreenToBoard(int mouseX, int mouseY, Pos& boardPos)
 {
     if (m_pBoard == nullptr) return false;
 
@@ -311,4 +320,142 @@ bool MyFirstWndGame::ConvertScreenToBoard(int mouseX, int mouseY, Point& boardPo
     boardPos.x = mouseX - boardStartX;
     boardPos.y = mouseY - boardStartY;
     return true;
+}
+
+
+
+void MyFirstWndGame::PrintBoardClickDebug(int mousePosX, int mousePosY)
+{
+    std::cout << '\n' << '\n' << '\n' << std::flush;
+    std::cout << __FUNCTION__ << std::endl;
+
+    // 윈도우 좌표 마우스 위치 출력
+    std::cout << "mousePos: ( " << mousePosX << ", " << mousePosY << " )" << std::endl;
+
+    Pos boardPos = { 0, 0 };
+    // 보드를 클릭했으면 mousePos -> boardPos 변환 후 저장
+    if (!ConvertScreenToBoard(mousePosX, mousePosY, boardPos))
+    {
+        std::cout << "보드밖 클릭" << std::endl;
+        return;
+    }
+    // 보드 좌표 클릭 위치 출력
+    std::cout << "boardPos: ( " << boardPos.x << ", " << boardPos.y << " )" << std::endl;
+
+    Index cellIndex = { -1, -1 };
+    // 셀을 클릭했으면 cellIndex에 인덱스 저장
+    if (!(m_pBoard->GetClickedCellIndex(boardPos, cellIndex)))
+    {
+        std::cout << "보드안 셀 밖 클릭" << std::endl;
+        return;
+    }
+    // 셀 인덱스 출력
+    std::cout << "cellIndex: ( " << cellIndex.row << ", " << cellIndex.col << " )" << std::endl;
+}
+
+
+void MyFirstWndGame::LoopPuzzleGame()
+{
+    switch (m_gameState)
+    {
+    case GameState::None:
+        m_leftClickedMousePos = { -1, -1 };
+        m_pClickPointer->SetVisible(false);
+        m_gameState = GameState::Waiting;
+
+        std::cout << "셀 클릭 준비 완료" << std::endl;
+
+    case GameState::Waiting:
+        {
+        if (m_leftClickedMousePos.x == -1 || m_leftClickedMousePos.y == -1) return;
+
+        Index cellIndex;
+        if (!GetScreenPosToCellIndex(m_leftClickedMousePos.x, m_leftClickedMousePos.y, cellIndex))
+        {
+            return;
+        }
+        m_firstSelectedCell = cellIndex;
+
+        ShowCellClickPointer(cellIndex);
+
+        m_leftClickedMousePos = { -1, -1 };
+        m_gameState = GameState::SelectedFirstCell;
+
+        std::cout << "첫번째 셀 클릭완료" << std::endl;
+        break;
+        }
+    case GameState::SelectedFirstCell:
+        {
+       
+        if (m_leftClickedMousePos.x == -1 || m_leftClickedMousePos.y == -1) return;
+
+        Index cellIndex;
+        if (!GetScreenPosToCellIndex(m_leftClickedMousePos.x, m_leftClickedMousePos.y, cellIndex))
+        {
+            return;
+        }
+        m_secondSelectedCell = cellIndex;
+
+        ShowCellClickPointer(cellIndex);
+
+        m_leftClickedMousePos = { -1, -1 };
+        m_gameState = GameState::SwapingCell;
+
+        std::cout << "두번째 셀 클릭완료" << std::endl;
+
+        break;
+        }
+    case GameState::SwapingCell:
+        {
+
+        if (m_pBoard->IsAdjacent(m_firstSelectedCell, m_secondSelectedCell))
+        {
+            m_pBoard->SwapFruit(m_firstSelectedCell, m_secondSelectedCell);
+            std::cout << "셀 스왑 완료" << std::endl;
+        }
+        else
+        {
+            std::cout << "셀 스왑 실패" << std::endl;
+        }       
+        m_gameState = GameState::None;
+
+        break;
+        }
+    case GameState::SpawnFruit:
+        {
+        break;
+        }
+    }
+}
+
+bool MyFirstWndGame::GetScreenPosToCellIndex(int screenX, int screenY, Index& cellIndex)
+{
+    // 스크린 좌표 -> 보드 좌표
+    Pos boardPos;
+    if (!ConvertScreenToBoard(screenX, screenY, boardPos))
+    {
+        // 보드 이미지 밖
+        return false;
+    }
+
+    // 보드 좌표 -> 셀 인덱스
+    if (!(m_pBoard->GetClickedCellIndex(boardPos, cellIndex)))
+    {
+        // 보드 이미지 안이지만 셀 범위 밖
+        return false;
+    }
+
+    return true;
+}
+
+void MyFirstWndGame::ShowCellClickPointer(const Index& cellIndex)
+{
+    Pos cellCenterPos = m_pBoard->GetCellCenterPos(cellIndex);
+    Pos ScreenCellCenterPos = {
+        (m_pBoard->GetPosition().x - m_pBoard->GetBoardWidth() / 2) + cellCenterPos.x,
+        (m_pBoard->GetPosition().y - m_pBoard->GetBoardHeight() / 2) + cellCenterPos.y };
+
+    if (!m_pClickPointer) return;
+    m_pClickPointer->SetPosition(ScreenCellCenterPos.x, ScreenCellCenterPos.y);
+    m_pClickPointer->SetVisible(true);
 }

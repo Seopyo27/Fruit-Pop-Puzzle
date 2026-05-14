@@ -15,6 +15,16 @@ namespace renderHelp
 	class BitmapInfo;
 }
 
+enum class GameState
+{
+	None,
+	Waiting,
+	SelectedFirstCell,
+	SelectedSecondCell,
+	SwapingCell,
+	SpawnFruit
+};
+
 class MyFirstWndGame : public NzWndBase
 {
 public:
@@ -51,15 +61,15 @@ private:
 	void LogicUpdate();
 
 	void CreateBoard(int boardWidth, int boardHeight, int cellWidth, int cellHeight, int maxRow, int maxCol, int gridOffsetX, int gridOffsetY, int gridGap);
+	void CreateClickPointer(int width, int height);
 
-	void CreatePlayer();
-	void CreateEnemy();
+	bool ConvertScreenToBoard(int mouseX, int mouseY, Pos& boardPos);
+	bool GetScreenPosToCellIndex(int screenX, int screenY, Index& cellIndex);
+	void ShowCellClickPointer(const Index& cellIndex);
 
-	void UpdatePlayerInfo();
+	void LoopPuzzleGame();
 
-	bool ConvertScreenToBoard(int mouseX, int mouseY, Point& boardPos);
-
-	GameObject* GetPlayer() const { return (GameObject*)m_GameObjectPtrTable[0]; }
+	void PrintBoardClickDebug(int mousePosX, int mousePosY);
 
 private:
 	HDC m_hFrontDC = nullptr;
@@ -80,8 +90,7 @@ private:
 	MOUSE_POS m_MousePos = { 0, 0 };
 	MOUSE_POS m_MousePosPrev = { 0, 0 };
 
-	MOUSE_POS m_PlayerTargetPos = { 0, 0 };
-	MOUSE_POS m_EnemySpawnPos = { 0, 0 };
+	MOUSE_POS m_leftClickedMousePos = { -1, -1 };
 
 	using BitmapInfo = renderHelp::BitmapInfo;
 
@@ -90,4 +99,10 @@ private:
 
 	// 퍼즐 게임 추가
 	Board* m_pBoard = nullptr;
+	GameObject* m_pClickPointer = nullptr;
+
+	Index m_firstSelectedCell;
+	Index m_secondSelectedCell;
+
+	GameState m_gameState = GameState::None;
 };

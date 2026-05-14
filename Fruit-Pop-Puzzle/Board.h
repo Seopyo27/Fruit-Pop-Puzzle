@@ -2,7 +2,7 @@
 #include "GameObject.h"
 #include "Fruit.h"
 
-struct Point
+struct Pos
 {
 	int x, y;
 };
@@ -30,7 +30,13 @@ public:
 	Board(ObjectType type) : GameObject(type) {}
 	~Board() override = default;
 
+	void Render(HDC hdc) override;
+
 	void InitBoard(const BoardLayout& layout);
+	void SetPFruitBitmapInfoTable(renderHelp::BitmapInfo** pFruitBitmapInfoTable);
+	void InitAllFruit();
+
+	void SwapFruit(const Index& f1, const Index& f2);
 
 	int GetBoardWidth() const;
 	int GetBoardHeight() const;
@@ -42,9 +48,12 @@ public:
 	int GetGridOffsetY() const;
 	int GetGridGap() const;
 
-	bool GetClickedCellIndex(Point boardPos, Index& cellIndex);
+	bool IsAdjacent(const Index& index1, const Index& index2);
 
-	Fruit* GetFruitAt(int row, int col);
+	Pos GetCellCenterPos(Index cellIndex);
+	bool GetClickedCellIndex(Pos boardPos, Index& cellIndex);
+	Fruit* GetFruitAt(Index index);
+	int GetRowColToIndex(int row, int col);
 
 private:
 	int	m_boardWidth = 0; // 전체 이미지 너비
@@ -60,4 +69,5 @@ private:
 	int m_gridHeight; // 그리드 높이
 
 	Fruit** m_fruitPtrTable = nullptr;
+	renderHelp::BitmapInfo** m_pFruitBitmapInfoTable = nullptr;
 };
