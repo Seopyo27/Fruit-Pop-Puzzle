@@ -26,18 +26,21 @@ void GameObject::SetBitmapInfo(BitmapInfo* bitmapInfo)
 
 void GameObject::Update(float deltaTime)
 {
+	// 애니페이션 프레임 넘기기
 	UpdateFrame(deltaTime);
 
+	// 이동할 것 있으면 이동하기
 	Move(deltaTime);
 
-	// Collider 업데이트
+	// 이동한것에 맞춰서 연동할것들 연동하기
 	synchronizePosition();
 }
 
 void GameObject::Render(HDC hdc)
 {
+	if (!m_isVisible) return;
 	DrawBitmap(hdc);
-	//DrawCollider(hdc);
+	DrawCollider(hdc);
 }
 
 
@@ -87,6 +90,8 @@ learning::Collider* GameObject::GetCollider()
 // 개선 방향에 대해 서로 토론하고 비교해 보세요.
 void GameObject::DrawCollider(HDC hdc)
 {
+	if (m_collider == nullptr) return;
+
 	HPEN hPen = CreatePen(PS_SOLID, 2, RGB(255, 0, 0));
 	HPEN hOldPen = (HPEN)SelectObject(hdc, hPen);
 	HBRUSH hOldBrush = (HBRUSH)SelectObject(hdc, GetStockObject(NULL_BRUSH));

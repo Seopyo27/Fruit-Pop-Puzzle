@@ -12,12 +12,9 @@ namespace renderHelp
 
 enum class ObjectType
 {
-	PLAYER,
-	ENEMY,
-	BULLET,
-	ITEM,
-	BACKGROUND,
-	BOARD
+	BOARD,
+	FRUIT,
+	POINTER
 };
 
 constexpr int OBJECT_NAME_LEN_MAX = 15;
@@ -44,6 +41,8 @@ public:
 
 	void SetWidth(int width) { m_width = width; }
 	void SetHeight(int height) { m_height = height; }
+
+	void SetVisible(bool isVisible) { m_isVisible = isVisible; }
 
 	ObjectType Type() const { return m_type; }
 
@@ -82,6 +81,8 @@ protected:
 	float m_speed = 0.0f; // 속력
 
 	char m_name[OBJECT_NAME_LEN_MAX] = "";
+
+	bool m_isVisible = true;
 };
 
 class GameObject : public GameObjectBase
@@ -139,6 +140,6 @@ protected:
 	float m_frameDuration = 35.0f; // 임의 설정
 
 	// Collider
-	learning::Collider* m_collider;
+	learning::Collider* m_collider = nullptr;
 	
 };
