@@ -1,6 +1,8 @@
 #pragma once
 #include "GameObject.h"
 #include "Fruit.h"
+#include <vector>
+#include <set>
 
 struct Pos
 {
@@ -9,6 +11,18 @@ struct Pos
 
 struct Index {
 	int row, col;
+
+	bool operator<(const Index& other) const
+	{
+		if (row != other.row)
+			return row < other.row;
+		return col < other.col;
+	}
+
+	Index operator+(const Index& other) const
+	{
+		return { row + other.row, col + other.col };
+	}
 };
 
 struct BoardLayout
@@ -34,7 +48,8 @@ public:
 
 	void InitBoard(const BoardLayout& layout);
 	void SetPFruitBitmapInfoTable(renderHelp::BitmapInfo** pFruitBitmapInfoTable);
-	void InitAllFruit();
+	void RefillAllFruit();
+	void InitFruitMatchedList();
 
 	void SwapFruit(const Index& f1, const Index& f2);
 
@@ -49,6 +64,17 @@ public:
 	int GetGridGap() const;
 
 	bool IsAdjacent(const Index& index1, const Index& index2);
+	bool ExistMatchedFruit();
+
+	void FindMathes();
+
+	void FillFruitEmptySpaces();
+
+	void SpawnFruit(const Index& index);
+
+	void FIndCrossMatches(const Index& startIndex);
+	void FIndBoxMatches(const Index& startIndex);
+	void DeleteMatchedFruit();
 
 	Pos GetCellCenterPos(Index cellIndex);
 	bool GetClickedCellIndex(Pos boardPos, Index& cellIndex);
@@ -69,5 +95,7 @@ private:
 	int m_gridHeight; // 그리드 높이
 
 	Fruit** m_fruitPtrTable = nullptr;
-	renderHelp::BitmapInfo** m_pFruitBitmapInfoTable = nullptr;
+	std::set<Index> m_fruitMatchedList;
+ 	renderHelp::BitmapInfo** m_pFruitBitmapInfoTable = nullptr;
+	
 };
