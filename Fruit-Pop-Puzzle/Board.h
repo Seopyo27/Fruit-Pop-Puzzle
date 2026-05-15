@@ -38,13 +38,12 @@ struct BoardLayout
 	int gridGap; // 그리드 간격
 };
 
-class Board : public GameObject
+class Board
 {
 public:
-	Board(ObjectType type) : GameObject(type) {}
+	Board();
 	~Board() override = default;
 
-	void Render(HDC hdc) override;
 
 	void InitBoard(const BoardLayout& layout);
 	void SetPFruitBitmapInfoTable(renderHelp::BitmapInfo** pFruitBitmapInfoTable);

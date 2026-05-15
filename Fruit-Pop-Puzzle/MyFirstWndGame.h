@@ -3,12 +3,18 @@
 #include "NzWndBase.h"
 #include "Utillity.h"
 #include "Board.h"
+#include "Script.h"
+#include <vector>
+#include <unordered_map>
+#include "RenderHelp.h"
+
 
 // [CHECK] #7  전방 선언을 사용하여 헤더파일의 의존성을 줄임.
 class GameTimer;
 class GameObjectBase;
 class GameObject;
 class Board;
+class NewGameObject;
 
 namespace renderHelp
 {
@@ -29,6 +35,8 @@ enum class GameState
 
 class MyFirstWndGame : public NzWndBase
 {
+	using BitmapInfo = renderHelp::BitmapInfo;
+
 public:
 	MyFirstWndGame() = default;
 	~MyFirstWndGame() override = default;
@@ -49,8 +57,11 @@ private:
 		}
 	};
 
+	void LoadResource();
 	void Update();
 	void Render();
+
+	void AddScript(Script* newScript);
 
 	void OnResize(int width, int height) override;
 	void OnClose() override;
@@ -62,12 +73,18 @@ private:
 	void FixedUpdate();
 	void LogicUpdate();
 
+	bool CreateGameObject(std::string name);
+	NewGameObject* GetGameObject(std::string name);
+
 	void CreateBoard(int boardWidth, int boardHeight, int cellWidth, int cellHeight, int maxRow, int maxCol, int gridOffsetX, int gridOffsetY, int gridGap);
 	void CreateClickPointer(int width, int height);
 
 	bool ConvertScreenToBoard(int mouseX, int mouseY, Pos& boardPos);
 	bool GetScreenPosToCellIndex(int screenX, int screenY, Index& cellIndex);
 	void ShowCellClickPointer(const Index& cellIndex);
+
+	bool AddBitmapInfo(std::string bitMapName, LPCWSTR filename);
+	BitmapInfo* GetBitmapInfo(std::string bitMapName);
 
 	void LoopPuzzleGame();
 
@@ -87,7 +104,8 @@ private:
 	float m_fDelayTime = 0.0f;
 
 	// [CHECK] #8. 게임 오브젝트를 관리하는 컨테이너.
-	GameObjectBase** m_GameObjectPtrTable = nullptr;
+	std::unordered_map<std::string, NewGameObject*> m_GameObjectPtrTable;
+
 	int m_GameObjectCount = 0;
 
 	MOUSE_POS m_MousePos = { 0, 0 };
@@ -95,10 +113,11 @@ private:
 
 	MOUSE_POS m_leftClickedMousePos = { -1, -1 };
 
-	using BitmapInfo = renderHelp::BitmapInfo;
+
 
 	BitmapInfo* m_pBoardBitmapInfo = nullptr;
-	BitmapInfo** m_pFruitBitmapInfoTable = nullptr;
+
+	std::unordered_map<std::string, BitmapInfo*> m_pBitmapInfoTable;
 
 	// 퍼즐 게임 추가
 	Board* m_pBoard = nullptr;
@@ -110,4 +129,7 @@ private:
 	GameState m_gameState = GameState::None;
 
 	GameState m_reservedGameState = GameState::None;
+
+	std::vector<Script*> m_scripts;
 };
+

@@ -4,19 +4,19 @@
 #include "Fruit.h"
 #include <cmath>
 
-void Board::Render(HDC hdc)
-{
-	GameObject::Render(hdc);
-
-	if (m_fruitPtrTable == nullptr) return;
-
-	for (int i = 0; i < m_maxCol * m_maxRow; i++)
-	{
-		Fruit* pFruit = m_fruitPtrTable[i];
-		if (pFruit == nullptr) continue;
-		pFruit->Render(hdc);
-	}
-}
+//void Board::Render(HDC hdc)
+//{
+//	GameObject::Render(hdc);
+//
+//	if (m_fruitPtrTable == nullptr) return;
+//
+//	for (int i = 0; i < m_maxCol * m_maxRow; i++)
+//	{
+//		Fruit* pFruit = m_fruitPtrTable[i];
+//		if (pFruit == nullptr) continue;
+//		pFruit->Render(hdc);
+//	}
+//}
 
 void Board::InitBoard(const BoardLayout& layout)
 {

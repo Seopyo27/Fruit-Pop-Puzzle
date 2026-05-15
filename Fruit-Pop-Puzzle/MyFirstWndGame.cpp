@@ -7,7 +7,9 @@
 #include "Board.h"
 #include <iostream>
 #include <assert.h>
-
+#include "NewGameObject.h"
+#include "Transform.h"
+#include "Sprite.h"
 
 using namespace learning;
 
@@ -38,35 +40,34 @@ bool MyFirstWndGame::Initialize()
 
     m_hDefaultBitmap = (HBITMAP)SelectObject(m_hBackDC, m_hBackBitmap);
 
-    m_GameObjectPtrTable = new GameObjectBase * [MAX_GAME_OBJECT_COUNT];
+    ////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////
 
-    for (int i = 0; i < MAX_GAME_OBJECT_COUNT; ++i)
-    {
-        m_GameObjectPtrTable[i] = nullptr;
-    }
+    // 리소스 로드
+    LoadResource();
 
-    // 필요한 리소스를 로드해볼까요
-#pragma region resource
-
-    // 파일의 절대 경로와 상대 경로 구분
-    // IDE 에서 인지하는 현재 경로와 실제 실행 파일을 바로 실행했을 때의 경로 기준이 달라요.
-    m_pBoardBitmapInfo = renderHelp::CreateBitmapInfo(L"./Resource/samplegrid.png");
-
-    m_pFruitBitmapInfoTable = new BitmapInfo * [3];
-
-    m_pFruitBitmapInfoTable[0] = renderHelp::CreateBitmapInfo(L"./Resource/apple.png");
-    m_pFruitBitmapInfoTable[1] = renderHelp::CreateBitmapInfo(L"./Resource/banana.png");
-    m_pFruitBitmapInfoTable[2] = renderHelp::CreateBitmapInfo(L"./Resource/grapes.png");
-
-#pragma endregion
-
-    // 리소스를 먼저 로드한 후에 세팅을 합니다.
+    ////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////
+    
+    // 게임 보드 객체 생성
+    CreateGameObject("Board");
+    // 게임 컴포넌트 설정
+    NewGameObject* board = GetGameObject("Board");
+    // 게임 보드, 트랜스폼 추가
+    Transform* boardTransform = board->AddComponent<Transform>();
+    boardTransform->SetPosition(512, 360);
+    boardTransform->SetWidth(800);
+    boardTransform->SetHeight(800);
+    // 게임 보드, 스프라이트 추가
+    Sprite* boardSprite = board->AddComponent<Sprite>();
+    // 비트맵 설정
+    boardSprite->SetBitmapInfo(GetBitmapInfo("Board"));
 
 	// 보드 생성
     CreateBoard(800, 800, 94, 95, 6, 6, 102, 93, 6);
 
     // 과일 비트맵 테이블 보드에 설정
-    m_pBoard->SetPFruitBitmapInfoTable(m_pFruitBitmapInfoTable);
+    m_pBoard->SetPFruitBitmapInfoTable(m_pBitmapInfoTable);
 
     // 과일 초기 전체 생성
     m_pBoard->RefillAllFruit();
@@ -75,8 +76,18 @@ bool MyFirstWndGame::Initialize()
     CreateClickPointer(80, 80);
     
 
-    return true;
+    ////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////
 
+    for (auto it : m_GameObjectPtrTable)
+    {
+        NewGameObject* gameObject = it.second;
+        Script* s = gameObject->GetComponent<Script>();
+        if (s == nullptr) continue;
+        s->Start();
+    }
+
+    return true;
 }
 
 void MyFirstWndGame::Run()
@@ -114,6 +125,14 @@ void MyFirstWndGame::Run()
 
 void MyFirstWndGame::Finalize()
 {
+    for (auto it : m_GameObjectPtrTable)
+    {
+        NewGameObject* gameObject = it.second;
+        Script* s = gameObject->GetComponent<Script>();
+        if (s == nullptr) continue;
+        s->End();
+    }
+
     delete m_pGameTimer;
     m_pGameTimer = nullptr;
 
@@ -135,17 +154,23 @@ void MyFirstWndGame::Finalize()
 
 void MyFirstWndGame::FixedUpdate()
 {
-
+    for (auto it : m_GameObjectPtrTable)
+    {
+        NewGameObject* gameObject = it.second;
+        Script* s = gameObject->GetComponent<Script>();
+        if (s == nullptr) continue;
+        s->FixedUpdate();
+    }
 }
 
 void MyFirstWndGame::LogicUpdate()
 {
-    for (int i = 0; i < MAX_GAME_OBJECT_COUNT; ++i)
+    for (auto it : m_GameObjectPtrTable)
     {
-        if (m_GameObjectPtrTable[i])
-        {
-            m_GameObjectPtrTable[i]->Update(m_fDeltaTime);
-        }
+        NewGameObject* gameObject = it.second;
+        Script* s = gameObject->GetComponent<Script>();
+        if (s == nullptr) continue;
+        s->Update(m_fDeltaTime);
     }
 
     LoopPuzzleGame();
@@ -523,3 +548,70 @@ void MyFirstWndGame::ShowCellClickPointer(const Index& cellIndex)
     m_pClickPointer->SetPosition(ScreenCellCenterPos.x, ScreenCellCenterPos.y);
     m_pClickPointer->SetVisible(true);
 }
+
+void MyFirstWndGame::AddScript(Script* newScript)
+{
+    m_scripts.push_back(newScript);
+}
+
+bool MyFirstWndGame::CreateGameObject(std::string name)
+{
+    auto it = m_GameObjectPtrTable.find(name);
+
+    // 이미 같은 이름을 가진 게임 오브젝트가 있는지 확인.
+    if (it == m_GameObjectPtrTable.end())
+    {
+        return false;
+    }
+
+    // 게임 오브젝트 생성 후 등록
+    NewGameObject* gameObject = new NewGameObject();
+    m_GameObjectPtrTable[name] = gameObject;
+    return true;
+}
+
+
+NewGameObject* MyFirstWndGame::GetGameObject(std::string name)
+{
+    auto it = m_GameObjectPtrTable.find(name);
+
+    // 이미 같은 이름을 가진 게임 오브젝트가 있는지 확인.
+    if (it == m_GameObjectPtrTable.end())
+    {
+        return nullptr;
+    }
+
+    return it->second;
+}
+
+// 비트맵 등록
+bool MyFirstWndGame::AddBitmapInfo(std::string bitMapName, LPCWSTR filename)
+{
+    BitmapInfo* bitMapInfo = renderHelp::CreateBitmapInfo(filename);
+    if (bitMapInfo == nullptr)
+    {
+        return false;
+    }
+    m_pBitmapInfoTable[bitMapName] = bitMapInfo;
+    return true;
+}
+
+// 비트맵 조회
+renderHelp::BitmapInfo* MyFirstWndGame::GetBitmapInfo(std::string bitMapName)
+{
+    auto it = m_pBitmapInfoTable.find(bitMapName);
+    if (it == m_pBitmapInfoTable.end()) return nullptr;
+    return it->second;
+}
+
+// 리소스 로드
+void MyFirstWndGame::LoadResource()
+{
+    AddBitmapInfo("Board", L"./Resource/samplegrid.png");
+    AddBitmapInfo("Apple", L"./Resource/apple.png");
+    AddBitmapInfo("Banana", L"./Resource/banana.png");
+    AddBitmapInfo("Grapes", L"./Resource/grapes.png");
+}
+
+
+
