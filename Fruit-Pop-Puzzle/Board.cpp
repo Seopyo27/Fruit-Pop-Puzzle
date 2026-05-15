@@ -40,7 +40,8 @@ void Board::InitBoard(const BoardLayout& layout)
 	m_gridHeight = (m_cellHeight * m_maxRow) + (m_gridGap * (m_maxRow - 1));
 
 	// 행 * 열 만큼 과일 테이블 공간 할당
-	m_fruitPtrTable = new Fruit * [m_maxRow * m_maxCol];
+	m_fruitPtrTable = new Fruit * [m_maxRow * m_maxCol]();
+
 }
 
 void Board::SetPFruitBitmapInfoTable(renderHelp::BitmapInfo** pFruitBitmapInfoTable)
@@ -48,37 +49,13 @@ void Board::SetPFruitBitmapInfoTable(renderHelp::BitmapInfo** pFruitBitmapInfoTa
 	m_pFruitBitmapInfoTable = pFruitBitmapInfoTable;
 }
 
-void Board::InitAllFruit()
+void Board::RefillAllFruit()
 {
-	// 랜덤 과일을 위한 준비
-	std::random_device rd;
-	unsigned long long seed = rd();
-	std::mt19937 gen(seed);
-	std::uniform_int_distribution<int> dis(0, (int)FruitType::COUNT - 1);
-
 	for (int row = 0; row < m_maxRow; row++)
 	{
 		for (int col = 0; col < m_maxCol; col++)
 		{
-			Fruit* pNewFruit = new Fruit();
-
-			Pos fruitPos;
-
-			Pos cellCenterPos = GetCellCenterPos({ row, col });
-
-			pNewFruit->SetPosition((m_pos.x - m_width / 2) + cellCenterPos.x, (m_pos.y - m_height / 2) + cellCenterPos.y);
-			pNewFruit->SetWidth(80);
-			pNewFruit->SetHeight(80);
-			pNewFruit->SetRow(row);
-			pNewFruit->SetCol(col);
-			pNewFruit->SetFruitType(static_cast<FruitType>(dis(gen)));
-
-			if (m_pFruitBitmapInfoTable != nullptr)
-			{
-				pNewFruit->SetBitmapInfo(m_pFruitBitmapInfoTable[int(pNewFruit->GetFruitType())]);
-			}
-			
-			m_fruitPtrTable[(row * m_maxCol) + col] = pNewFruit;
+			SpawnFruit({ row, col });
 		}
 	}
 }
@@ -205,3 +182,167 @@ bool Board::IsAdjacent(const Index& index1, const Index& index2)
 
 	return abs(index1.row - index2.row) + abs(index1.col - index2.col) == 1;
 }
+
+void Board::FindMathes()
+{
+	for (int row = 0; row < m_maxRow; row++)
+	{
+		for (int col = 0; col < m_maxCol; col++)
+		{
+			if (m_fruitPtrTable[GetRowColToIndex(row, col)] == nullptr) continue;
+			FIndCrossMatches({ row, col });
+			FIndBoxMatches({ row, col });
+		}
+	}
+}
+
+void Board::FIndCrossMatches(const Index& startIndex)
+{
+	Index dxy[2][2] = { {{-1, 0}, {1, 0}}, {{0, -1}, {0, 1}} };
+
+	// 가로, 새로 두번 검사.
+	for (int i = 0; i < 2; i++)
+	{
+		// 확인 한 곳 저장
+		std::vector<Index> checked;
+		// 시작 지점 저장
+		checked.push_back(startIndex);
+		// 같은 과일 수
+		int matchedCount = 1;
+
+		// 양쪽으로 검사
+		for (int j = 0; j < 2; j++)
+		{
+			Index currentIndex = startIndex;
+			while (true)
+			{
+				currentIndex = currentIndex + dxy[i][j];
+
+				if ((currentIndex.row < 0 || m_maxRow <= currentIndex.row) ||
+					(currentIndex.col < 0 || m_maxCol <= currentIndex.col))
+				{
+					break;
+				}
+
+				if (GetFruitAt(currentIndex) == nullptr) break;
+
+				if (GetFruitAt(startIndex)->GetFruitType() != GetFruitAt(currentIndex)->GetFruitType())
+				{
+					break;
+				}
+
+				checked.push_back(currentIndex);
+				matchedCount += 1;
+			}
+		}
+
+		if (matchedCount >= 3)
+		{
+			m_fruitMatchedList.insert(checked.begin(), checked.end());
+			checked.clear();
+		}
+	}
+}
+
+void Board::FIndBoxMatches(const Index& startIndex)
+{
+	Index dxy[4][3] = { {{-1, 0}, {0, 1}, {-1, 1}}, {{1, 0}, {0, 1}, {1, 1}},{{1, 0}, {0, -1}, {1, -1}}, {{-1, 0}, {0, -1}, {-1, -1}} };
+
+	for (int i = 0; i < 4; i++)
+	{
+		// 확인 한 곳 저장
+		std::vector<Index> checked;
+		// 시작 지점 저장
+		checked.push_back(startIndex);
+		// 같은 과일 수
+		int matchedCount = 1;
+
+		for (int j = 0; j < 3; j++)
+		{
+			Index currentIndex = startIndex + dxy[i][j];
+
+			if ((currentIndex.row < 0 || m_maxRow <= currentIndex.row) ||
+				(currentIndex.col < 0 || m_maxCol <= currentIndex.col))
+			{
+				break;
+			}
+
+			if (GetFruitAt(currentIndex) == nullptr) break;
+
+			if (GetFruitAt(startIndex)->GetFruitType() != GetFruitAt(currentIndex)->GetFruitType())
+			{
+				break;
+			}
+
+			checked.push_back(currentIndex);
+			matchedCount += 1;
+		}
+
+		if (matchedCount >= 4)
+		{
+			m_fruitMatchedList.insert(checked.begin(), checked.end());
+			checked.clear();
+		}
+	}
+}
+
+void Board::DeleteMatchedFruit()
+{
+	// 매칭된 과일 제거
+	for (Index matchedFruit : m_fruitMatchedList)
+	{
+		delete m_fruitPtrTable[GetRowColToIndex(matchedFruit.row, matchedFruit.col)];
+		m_fruitPtrTable[GetRowColToIndex(matchedFruit.row, matchedFruit.col)] = nullptr;
+	}
+}
+
+void Board::InitFruitMatchedList()
+{
+	m_fruitMatchedList.clear();
+}
+
+bool Board::ExistMatchedFruit()
+{
+	return !m_fruitMatchedList.empty();
+}
+
+void Board::SpawnFruit(const Index& index)
+{
+	if (m_fruitPtrTable[GetRowColToIndex(index.row, index.col)] != nullptr)
+	{
+		delete m_fruitPtrTable[GetRowColToIndex(index.row, index.col)];
+	}
+
+	// 랜덤 과일을 위한 준비
+	static std::random_device rd;
+	static unsigned long long seed = rd();
+	static std::mt19937 gen(seed);
+	static std::uniform_int_distribution<int> dis(0, (int)FruitType::COUNT - 1);
+
+	Fruit* pNewFruit = new Fruit();
+
+	Pos cellCenterPos = GetCellCenterPos({ index.row, index.col });
+
+	pNewFruit->SetPosition((m_pos.x - m_width / 2) + cellCenterPos.x, (m_pos.y - m_height / 2) + cellCenterPos.y);
+	pNewFruit->SetWidth(80);
+	pNewFruit->SetHeight(80);
+	pNewFruit->SetRow(index.row);
+	pNewFruit->SetCol(index.col);
+	pNewFruit->SetFruitType(static_cast<FruitType>(dis(gen)));
+
+	if (m_pFruitBitmapInfoTable != nullptr)
+	{
+		pNewFruit->SetBitmapInfo(m_pFruitBitmapInfoTable[int(pNewFruit->GetFruitType())]);
+	}
+
+	m_fruitPtrTable[GetRowColToIndex(index.row, index.col)] = pNewFruit;
+}
+
+void Board::FillFruitEmptySpaces()
+{
+	for (Index index : m_fruitMatchedList)
+	{
+		SpawnFruit(index);
+	}
+}
+

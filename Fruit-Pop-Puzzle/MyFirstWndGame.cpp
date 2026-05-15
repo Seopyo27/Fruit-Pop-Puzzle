@@ -69,7 +69,7 @@ bool MyFirstWndGame::Initialize()
     m_pBoard->SetPFruitBitmapInfoTable(m_pFruitBitmapInfoTable);
 
     // 과일 초기 전체 생성
-    m_pBoard->InitAllFruit();
+    m_pBoard->RefillAllFruit();
 
     //클릭 포인터 생성
     CreateClickPointer(80, 80);
@@ -359,14 +359,16 @@ void MyFirstWndGame::LoopPuzzleGame()
     switch (m_gameState)
     {
     case GameState::None:
+    {
+        m_pBoard->InitFruitMatchedList();
         m_leftClickedMousePos = { -1, -1 };
         m_pClickPointer->SetVisible(false);
         m_gameState = GameState::Waiting;
 
         std::cout << "셀 클릭 준비 완료" << std::endl;
-
+    }
     case GameState::Waiting:
-        {
+    {
         if (m_leftClickedMousePos.x == -1 || m_leftClickedMousePos.y == -1) return;
 
         Index cellIndex;
@@ -376,6 +378,13 @@ void MyFirstWndGame::LoopPuzzleGame()
         }
         m_firstSelectedCell = cellIndex;
 
+        if (m_pBoard->GetFruitAt(m_firstSelectedCell) == nullptr)
+        {
+            std::cout << "첫번째 셀 과일없음!!" << std::endl;
+            m_gameState = GameState::None;
+            break;
+        }
+
         ShowCellClickPointer(cellIndex);
 
         m_leftClickedMousePos = { -1, -1 };
@@ -383,9 +392,9 @@ void MyFirstWndGame::LoopPuzzleGame()
 
         std::cout << "첫번째 셀 클릭완료" << std::endl;
         break;
-        }
+    }
     case GameState::SelectedFirstCell:
-        {
+    {
        
         if (m_leftClickedMousePos.x == -1 || m_leftClickedMousePos.y == -1) return;
 
@@ -396,6 +405,13 @@ void MyFirstWndGame::LoopPuzzleGame()
         }
         m_secondSelectedCell = cellIndex;
 
+        if (m_pBoard->GetFruitAt(m_secondSelectedCell) == nullptr)
+        {
+            std::cout << "두번째 셀 과일없음!!" << std::endl;
+            m_gameState = GameState::None;
+            break;
+        }
+
         ShowCellClickPointer(cellIndex);
 
         m_leftClickedMousePos = { -1, -1 };
@@ -404,10 +420,10 @@ void MyFirstWndGame::LoopPuzzleGame()
         std::cout << "두번째 셀 클릭완료" << std::endl;
 
         break;
-        }
+    }
     case GameState::SwapingCell:
-        {
-
+    {
+        m_pClickPointer->SetVisible(false);
         if (m_pBoard->IsAdjacent(m_firstSelectedCell, m_secondSelectedCell))
         {
             m_pBoard->SwapFruit(m_firstSelectedCell, m_secondSelectedCell);
@@ -416,15 +432,63 @@ void MyFirstWndGame::LoopPuzzleGame()
         else
         {
             std::cout << "셀 스왑 실패" << std::endl;
-        }       
-        m_gameState = GameState::None;
+            m_gameState = GameState::None;
+            break;
+        }
+
+        m_gameState = GameState::Delay;
+        m_reservedGameState = GameState::MatchingFruit;
 
         break;
+    }
+    case GameState::MatchingFruit:
+    {
+        m_pBoard->FindMathes();
+        std::cout << "과일 매칭 완료" << std::endl;
+
+        if (m_pBoard->ExistMatchedFruit())
+        {
+            std::cout << "매칭된 과일 발견" << std::endl;
+            m_pBoard->DeleteMatchedFruit();
+            std::cout << "매칭된 과일 삭제 완료" << std::endl;
+
+            m_gameState = GameState::Delay;
+            m_reservedGameState = GameState::SpawnFruit;
         }
+        else
+        {
+            m_gameState = GameState::None;
+        }
+
+        break;
+    }
     case GameState::SpawnFruit:
         {
+        m_pBoard->FillFruitEmptySpaces();
+        m_pBoard->InitFruitMatchedList();
+        m_gameState = GameState::Delay;
+        m_reservedGameState = GameState::MatchingFruit;
+        std::cout << "빈 곳에 과일 채우기 완료" << std::endl;
         break;
         }
+
+    case GameState::Delay:
+        {
+        // 지연시간 측정
+        m_fDelayTime += m_pGameTimer->DeltaTimeMS();
+
+        if (m_fDelayTime >= 1000.0f)
+        {
+            // 딜레이 후
+            m_fDelayTime = 0.0f;
+
+            // 다음 상태로 전환
+            m_gameState = m_reservedGameState;
+        }
+
+
+        }
+
     }
 }
 

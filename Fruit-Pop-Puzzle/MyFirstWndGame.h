@@ -22,7 +22,9 @@ enum class GameState
 	SelectedFirstCell,
 	SelectedSecondCell,
 	SwapingCell,
-	SpawnFruit
+	MatchingFruit,
+	SpawnFruit,
+	Delay
 };
 
 class MyFirstWndGame : public NzWndBase
@@ -82,6 +84,7 @@ private:
 
 	float m_fDeltaTime = 0.0f;
 	float m_fFrameCount = 0.0f;
+	float m_fDelayTime = 0.0f;
 
 	// [CHECK] #8. 게임 오브젝트를 관리하는 컨테이너.
 	GameObjectBase** m_GameObjectPtrTable = nullptr;
@@ -105,4 +108,6 @@ private:
 	Index m_secondSelectedCell;
 
 	GameState m_gameState = GameState::None;
+
+	GameState m_reservedGameState = GameState::None;
 };
