@@ -1,8 +1,9 @@
 #include "BoardManager.h"
 #include "NewGameObject.h"
 #include "Transform.h"
+#include "MyFirstWndGame.h"
 #include "Board.h"
-
+#include <random>
 void BoardManager::Start()
 {
 	m_transform = m_pOwner->GetComponent<Transform>();
@@ -11,6 +12,6 @@ void BoardManager::Start()
 
 void BoardManager::Update(float dT)
 {
-
 }
+
 

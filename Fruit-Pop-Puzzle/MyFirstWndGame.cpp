@@ -613,5 +613,18 @@ void MyFirstWndGame::LoadResource()
     AddBitmapInfo("Grapes", L"./Resource/grapes.png");
 }
 
+bool MyFirstWndGame::AddGameObject(std::string name, NewGameObject* gameObject)
+{
+    auto it = m_GameObjectPtrTable.find(name);
+
+    // 이미 같은 이름을 가진 게임 오브젝트가 있는지 확인.
+    if (it == m_GameObjectPtrTable.end())
+    {
+        return false;
+    }
+
+    m_GameObjectPtrTable[name] = gameObject;
+    return true;
+}
 
 

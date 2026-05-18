@@ -136,6 +136,7 @@
     <ClCompile Include="NewGameObject.h" />
     <ClCompile Include="NzWndBase.cpp" />
     <ClCompile Include="RenderHelp.cpp" />
+    <ClCompile Include="Script.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Utillity.cpp" />
   </ItemGroup>

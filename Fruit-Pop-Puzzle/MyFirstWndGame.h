@@ -45,6 +45,9 @@ public:
 	void Run();
 	void Finalize();
 
+	bool AddGameObject(std::string name, NewGameObject* gameObject);
+	BitmapInfo* GetBitmapInfo(std::string bitMapName);
+
 private:
 	struct MOUSE_POS
 	{
@@ -75,6 +78,7 @@ private:
 
 	bool CreateGameObject(std::string name);
 	NewGameObject* GetGameObject(std::string name);
+	
 
 	void CreateBoard(int boardWidth, int boardHeight, int cellWidth, int cellHeight, int maxRow, int maxCol, int gridOffsetX, int gridOffsetY, int gridGap);
 	void CreateClickPointer(int width, int height);
@@ -84,7 +88,7 @@ private:
 	void ShowCellClickPointer(const Index& cellIndex);
 
 	bool AddBitmapInfo(std::string bitMapName, LPCWSTR filename);
-	BitmapInfo* GetBitmapInfo(std::string bitMapName);
+	
 
 	void LoopPuzzleGame();
 

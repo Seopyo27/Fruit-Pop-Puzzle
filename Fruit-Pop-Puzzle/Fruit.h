@@ -24,6 +24,7 @@ public:
 	void SetCol(int col);
 	void SetFruitType(FruitType type);
 
+
 private:
 	int m_row, m_col; // 보드 내 인덱스
 	FruitType m_type;

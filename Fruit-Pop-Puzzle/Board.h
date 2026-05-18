@@ -81,6 +81,9 @@ public:
 	int GetRowColToIndex(int row, int col);
 
 private:
+	Pos m_pos = { 0, 0 };
+	int m_width = 0;
+	int m_height = 0;
 	int	m_boardWidth = 0; // 전체 이미지 너비
 	int m_boardHeight = 0; // 전체 이미지 높이
 	int m_cellWidth = 0; // 셀 너비
