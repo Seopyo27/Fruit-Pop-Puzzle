@@ -43,22 +43,18 @@ namespace EHEngine
 	public:
 		void InitBoard(const BoardLayout& layout);
 
-		Fruit& GetFruitAt(const GridIndex& index);
-
+		const Fruit& GetFruitAt(const GridIndex& index);
 		void PlaceFruit(const Fruit& fruit, const GridIndex& index);
 		void SwapFruit(const GridIndex& f1, const GridIndex& f2);
-		void MoveFruit(const GridIndex& from, const GridIndex& to);
-		void DeleteFruit(const GridIndex& index);
-		bool ExistFruit(const GridIndex& index);
-		
 		
 		bool IsAdjacent(const GridIndex& index1, const GridIndex& index2);
 
-		void DeleteMatchedFruit();
+		void FindCrossMatches(const GridIndex& startIndex);
+		void FIndBoxMatches(const GridIndex& startIndex);
 
 		int GetRowColToIndex(const GridIndex& index);
 		learning::Vector2f GetCellCenterPos(const GridIndex& index);
-		std::vector<Fruit>& GetFruitTable() { return m_fruitTable; }
+
 		int GetBoardWidth() const { return m_boardWidth; }
 		int GetBoardHeight() const { return m_boardHeight; }
 		int GetCellWidth() const { return m_cellWidth; }
@@ -87,6 +83,7 @@ namespace EHEngine
 		int m_gridHeight; // 그리드 높이
 
 		std::vector<Fruit> m_fruitTable;
+		std::set<GridIndex> m_fruitMatchedList;
 	};
 
 }
