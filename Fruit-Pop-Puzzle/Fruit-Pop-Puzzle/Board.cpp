@@ -1,8 +1,8 @@
 #include "Board.h"
 #include "Utillity.h"
 #include "GameObject.h"
+#include "Transform.h"
 #include <random>
-#include <iostream>
 
 namespace EHEngine
 {
@@ -36,36 +36,60 @@ namespace EHEngine
 		m_gridWidth = (m_cellWidth * m_maxCol) + (m_gridGap * (m_maxCol - 1));
 		m_gridHeight = (m_cellHeight * m_maxRow) + (m_gridGap * (m_maxRow - 1));
 
+		// 과일 목록 초기화
+		for (Fruit fruit : m_fruitTable)
+		{
+			fruit.type = FruitType::NONE;
+
+			if (fruit.gameObject != nullptr)
+			{
+				delete fruit.gameObject;
+			}
+		}
+
 		m_fruitTable.assign(m_maxRow * m_maxCol, Fruit{});
+
+		// 매칭된 과일 목록 초기화
+		m_fruitMatchedList.clear();
 	}
 
 	// 해당 위치에 과일 배치
 	void Board::PlaceFruit(const Fruit& fruit, const GridIndex& index)
 	{
-		m_fruitTable[GetRowColToIndex(index)] = fruit;
+		Fruit& targetCell = m_fruitTable[GetRowColToIndex(index)];
+
+		targetCell.type = FruitType::NONE;
+		if (targetCell.gameObject != nullptr)
+		{
+			delete targetCell.gameObject;
+			targetCell.gameObject = nullptr;
+		}
+
+		targetCell = fruit;
 	}
 
-	Fruit& Board::GetFruitAt(const GridIndex& index)
+	const Fruit& Board::GetFruitAt(const GridIndex& index)
 	{
 		return m_fruitTable[GetRowColToIndex(index)];
 	}
 
-	// 과일 데이터 스왑
 	void Board::SwapFruit(const GridIndex& i1, const GridIndex& i2)
 	{
+		GameObject* fruit1 = m_fruitTable[GetRowColToIndex(i1)].gameObject;
+		GameObject* fruit2 = m_fruitTable[GetRowColToIndex(i2)].gameObject;
+
+		// 오브젝트 위치 스왑
+		Transform* t1 = fruit1->GetComponent<Transform>();
+		Transform* t2 = fruit2->GetComponent<Transform>();
+
+		learning::Vector2f tempPos = t1->GetPosition();
+		t1->SetPosition(t2->GetPosition().x, t2->GetPosition().y);
+		t2->SetPosition(tempPos.x, tempPos.y);
+
+		// 보드 인덱스 스왑
 		Fruit tempFruit = m_fruitTable[GetRowColToIndex(i1)];
 		m_fruitTable[GetRowColToIndex(i1)] = m_fruitTable[GetRowColToIndex(i2)];
 		m_fruitTable[GetRowColToIndex(i2)] = tempFruit;
-	}
-
-	// 과일 데이터 이동
-	void Board::MoveFruit(const GridIndex& from, const GridIndex& to)
-	{
-		// 보드 인덱스 이동, 데이터 덮어쓰기
-		m_fruitTable[GetRowColToIndex(to)] = m_fruitTable[GetRowColToIndex(from)];
-
-		// 원래 자리 초기화
-		m_fruitTable[GetRowColToIndex(from)] = { FruitType::NONE, nullptr };
 	}
 
 	bool  Board::IsAdjacent(const GridIndex& index1, const GridIndex& index2)
@@ -88,15 +112,46 @@ namespace EHEngine
 		return abs(index1.row - index2.row) + abs(index1.col - index2.col) == 1;
 	}
 
-	void Board::DeleteFruit(const GridIndex& index)
+	void Board::FIndBoxMatches(const GridIndex& startIndex)
 	{
-		m_fruitTable[GetRowColToIndex(index)].type = FruitType::NONE;
-		m_fruitTable[GetRowColToIndex(index)].gameObject = nullptr;
+		GridIndex dxy[4][3] = { {{-1, 0}, {0, 1}, {-1, 1}}, {{1, 0}, {0, 1}, {1, 1}},{{1, 0}, {0, -1}, {1, -1}}, {{-1, 0}, {0, -1}, {-1, -1}} };
+
+		for (int i = 0; i < 4; i++)
+		{
+			// 확인 한 곳 저장
+			std::vector<GridIndex> checked;
+			// 시작 지점 저장
+			checked.push_back(startIndex);
+			// 같은 과일 수
+			int matchedCount = 1;
+
+			for (int j = 0; j < 3; j++)
+			{
+				GridIndex currentIndex = startIndex + dxy[i][j];
+
+				if ((currentIndex.row < 0 || m_maxRow <= currentIndex.row) ||
+					(currentIndex.col < 0 || m_maxCol <= currentIndex.col))
+				{
+					break;
+				}
+
+				if (GetFruitAt(currentIndex) == nullptr) break;
+
+				if (GetFruitAt(startIndex)->GetFruitType() != GetFruitAt(currentIndex)->GetFruitType())
+				{
+					break;
+				}
+
+				checked.push_back(currentIndex);
+				matchedCount += 1;
+			}
+
+			if (matchedCount >= 4)
+			{
+				m_fruitMatchedList.insert(checked.begin(), checked.end());
+				checked.clear();
+			}
+		}
 	}
 
-	bool Board::ExistFruit(const GridIndex& index)
-	{
-		return m_fruitTable[GetRowColToIndex(index)].type != FruitType::NONE &&
-			   m_fruitTable[GetRowColToIndex(index)].gameObject != nullptr;
-	}
 }
