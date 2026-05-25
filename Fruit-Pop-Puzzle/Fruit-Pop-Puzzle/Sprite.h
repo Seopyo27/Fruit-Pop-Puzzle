@@ -15,16 +15,24 @@ namespace EHEngine
 		Sprite(GameObject* pOwner, GameApp* pGame);
 
 		void SetBitmapInfo(renderHelp::BitmapInfo* bitmapInfo);
-		renderHelp::BitmapInfo* GetBitmapInfo() {
-			return m_pBitmapInfo;
-		}
+		renderHelp::BitmapInfo* GetBitmapInfo() { return m_pBitmapInfo; }
+		void SetSpriteSheetBitmapInfo(renderHelp::BitmapInfo* bitmapInfo, int spriteWidth, int spriteHeight);
+
+		void SetOffsetX(int offsetX) { m_offsetX = offsetX; }
+		void SetOffsetY(int offsetY) { m_offsetY = offsetY; }
 
 		void Render(HDC hdc) override;
 	private:
 		Transform* m_pTransform = nullptr;
 		renderHelp::BitmapInfo* m_pBitmapInfo = nullptr;
-		int m_frameWidth = 0;
-		int m_frameHeight = 0;
+
+		// 이미지 사이즈
+		int m_spriteWidth = 0;
+		int m_spriteHeight = 0;
+
+		// 스프라이트 오프셋
+		int m_offsetX = 0;
+		int m_offsetY = 0;
 	};
 }
 

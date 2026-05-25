@@ -22,6 +22,10 @@ namespace learning
 		static void ToggleShow();
 	};
 
+	struct Pos
+	{
+		int x, y;
+	};
 
 	struct Vector2f
 	{

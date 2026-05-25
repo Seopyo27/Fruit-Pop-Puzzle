@@ -69,6 +69,9 @@
     <ClCompile Include="FallingFruit.cpp">
       <Filter>Scripts</Filter>
     </ClCompile>
+    <ClCompile Include="Animator.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameTimer.h">
@@ -118,6 +121,9 @@
     </ClInclude>
     <ClInclude Include="FallingFruit.h">
       <Filter>Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Animator.h">
+      <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
