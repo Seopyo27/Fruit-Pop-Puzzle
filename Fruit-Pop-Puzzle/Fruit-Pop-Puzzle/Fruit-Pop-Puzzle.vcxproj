@@ -126,6 +126,7 @@
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="BoardManager.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="FallingFruit.cpp" />
     <ClCompile Include="GameApp.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -142,6 +143,7 @@
     <ClInclude Include="Board.h" />
     <ClInclude Include="BoardManager.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="FallingFruit.h" />
     <ClInclude Include="GameApp.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameObject.h" />

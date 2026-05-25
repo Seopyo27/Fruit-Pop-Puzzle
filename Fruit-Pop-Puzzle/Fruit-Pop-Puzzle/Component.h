@@ -20,8 +20,10 @@ namespace EHEngine
 		virtual void Update(float dT) {}
 		virtual void FixedUpdate() {}
 
-		bool GetIsStarted() { return m_IsStarted; }
-		void SetIsStarted(bool b) { m_IsStarted = b; }
+		bool GetIsEnabled() { return m_isEnabled; }
+		void SetIsEnabled(bool b) { m_isEnabled = b; }
+		bool GetIsStarted() { return m_isStarted; }
+		void SetIsStarted(bool b) { m_isStarted = b; }
 
 		void SetOwner(GameObject* owner) { m_pOwnerObj = owner; }
 		GameObject* GetOwner() const { return m_pOwnerObj; }
@@ -29,7 +31,8 @@ namespace EHEngine
 	protected:
 		GameObject* m_pOwnerObj;
 		GameApp* m_pGame = nullptr;
-		bool m_IsStarted = false;
+		bool m_isEnabled = true;
+		bool m_isStarted = false;
 	};
 }
 

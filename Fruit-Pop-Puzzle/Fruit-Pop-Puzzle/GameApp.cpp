@@ -156,6 +156,9 @@ namespace EHEngine
 			{
 				Component* comp = jt.second;
 
+				// 비활성화라면 실행하지않음
+				if (!comp->GetIsEnabled()) continue;
+
 				// Start()가 실행되지 않았다면 1회 실행
 				if (!comp->GetIsStarted())
 				{
@@ -181,6 +184,9 @@ namespace EHEngine
 			for (const auto& jt : obj->GetComponents())
 			{
 				Component* comp = jt.second;
+
+				// 비활성화라면 실행하지않음
+				if (!comp->GetIsEnabled()) continue;
 
 				// Start()가 실행되지 않았다면 1회 실행
 				if (!comp->GetIsStarted())

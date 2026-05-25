@@ -151,7 +151,7 @@ namespace EHEngine
 
 		else if (m_gameState == GameState::DROP)
 		{
-			m_boardManager->DropFruits();
+			m_boardManager->CheckDropFruit();
 			std::cout << "과일 드랍 완료" << std::endl;
 			m_gameState = GameState::DELAY;
 			m_reservedGameState = GameState::SPAWN;

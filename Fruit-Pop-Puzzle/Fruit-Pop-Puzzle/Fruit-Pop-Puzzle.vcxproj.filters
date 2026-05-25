@@ -66,6 +66,9 @@
     <ClCompile Include="GameManager.cpp">
       <Filter>Scripts</Filter>
     </ClCompile>
+    <ClCompile Include="FallingFruit.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameTimer.h">
@@ -111,6 +114,9 @@
       <Filter>소스 파일</Filter>
     </ClInclude>
     <ClInclude Include="GameManager.h">
+      <Filter>Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="FallingFruit.h">
       <Filter>Scripts</Filter>
     </ClInclude>
   </ItemGroup>

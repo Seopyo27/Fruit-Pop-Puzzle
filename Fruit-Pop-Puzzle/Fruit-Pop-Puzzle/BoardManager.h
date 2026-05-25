@@ -16,11 +16,11 @@ namespace EHEngine
 		void CreateFruit(const GridIndex& index);
 		void DeleteFruit(const GridIndex& index);
 		void PlaceFruit(const Fruit& fruit, const GridIndex& index);
-		void MoveFruit(const GridIndex& from, const GridIndex& to);
 		void RefillAllFruit();
 		void FillFruitEmptySpaces();
 
-		void DropFruits();
+		void CheckDropFruit();
+		void DropFruit(const GridIndex& from, const GridIndex& to);
 
 		void SwapFruit(const GridIndex& index1, const GridIndex& index2);
 		bool IsAdjacent(const GridIndex& index1, const GridIndex& index2);
