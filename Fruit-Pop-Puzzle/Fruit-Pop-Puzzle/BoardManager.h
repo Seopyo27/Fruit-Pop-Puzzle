@@ -31,6 +31,9 @@ namespace EHEngine
 
 		void InitFruitMatchedList();
 		bool ExistMatchedFruit();
+
+		void PlayAnimation();
+
 		void DeleteMatchedFruit();
 
 		bool GetGridIndexFromScreenPos(const MOUSE_POS& mousePos, GridIndex& gridIndex);

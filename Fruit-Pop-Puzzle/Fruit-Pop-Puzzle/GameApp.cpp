@@ -21,7 +21,7 @@ namespace EHEngine
 		m_pGameTimer->Reset();
 
 		// 윈도우 생성
-		if (false == __super::Create(className, windowName, 1024, 720))
+		if (false == __super::Create(className, windowName, 800, 800))
 		{
 			return false;
 		}
@@ -49,7 +49,7 @@ namespace EHEngine
 		Transform* transform = obj->GetComponent<Transform>();
 		transform->SetWidth(800);
 		transform->SetHeight(800);
-		transform->SetPosition(512, 360);
+		transform->SetPosition(400, 400);
 
 		// 스프라이트 추가
 		Sprite* sprite = obj->AddComponent<Sprite>();
@@ -280,10 +280,11 @@ namespace EHEngine
 
 	void GameApp::LoadResource()
 	{
-		AddBitmapInfo("Board", L"./Resource/samplegrid.png");
-		AddBitmapInfo("Apple", L"./Resource/apple.png");
-		AddBitmapInfo("Banana", L"./Resource/banana.png");
-		AddBitmapInfo("Grapes", L"./Resource/grapes.png");
+		AddBitmapInfo("Board", L"./Resource/Board.png");
+		AddBitmapInfo("AppleSpriteSheet", L"./Resource/AppleSpriteSheet.png");
+		AddBitmapInfo("BananaSpriteSheet", L"./Resource/BananaSpriteSheet.png");
+		AddBitmapInfo("GrapesSpriteSheet", L"./Resource/GrapesSpriteSheet.png");
+		AddBitmapInfo("WaterMelonSpriteSheet", L"./Resource/WaterMelonSpriteSheet.png");
 	}
 
 	GameObject* GameApp::CreateGameObject()

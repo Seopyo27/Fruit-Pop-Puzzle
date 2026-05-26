@@ -53,13 +53,11 @@ namespace EHEngine
 		int m_spriteIndex = 0;
 
 		// 타이머
-		float Timer = 0;
+		float m_Timer = 0;
 
 		// 옵션
-		float m_frameTime = 0.033f; 
-		bool isLoop = false;
-
-
+		float m_frameTime = 30.0f; 
+		bool m_isLoop = false;
 	};
 }
 

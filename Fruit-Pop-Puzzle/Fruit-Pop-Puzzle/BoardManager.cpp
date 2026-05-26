@@ -4,6 +4,7 @@
 #include "Transform.h"
 #include "Sprite.h"
 #include "FallingFruit.h"
+#include "Animator.h"
 #include <random>
 
 namespace EHEngine
@@ -52,14 +53,34 @@ namespace EHEngine
 		transform->SetWidth(80);
 		transform->SetHeight(80);
 
-		static const char* fruitNames[] = { "Apple", "Banana", "Grapes" };
+		static const char* fruitSpriteSheetNames[] = { "AppleSpriteSheet", "BananaSpriteSheet", "GrapesSpriteSheet", "WaterMelonSpriteSheet"};
 
+		std::cout << m_pGame->GetBitmapInfo("AppleSpriteSheet") << std::endl;
 		// Sprite 추가
 		Sprite* sprite = newObj->AddComponent<Sprite>();
-		sprite->SetBitmapInfo(m_pGame->GetBitmapInfo(fruitNames[fruitTypeNum]));
+		sprite->SetBitmapInfo(m_pGame->GetBitmapInfo(fruitSpriteSheetNames[fruitTypeNum]), 200, 200, 0, 0);
 
 		// FallingFruit 추가, 처음엔 움직이지 않음
 		newObj->AddComponent<FallingFruit>()->SetIsEnabled(false);
+
+		// Animator 추가
+		Animator* animator = newObj->AddComponent<Animator>();
+		SpriteSheetLayout sheetLayout =
+		{
+			2000,
+			200,
+			0,
+			0,
+			200,
+			200,
+			0,
+			0,
+			1,
+			10,
+			10
+		};
+
+		animator->InitAnimationClip(m_pGame->GetBitmapInfo(fruitSpriteSheetNames[fruitTypeNum]), sheetLayout);
 		
 		// 과일 구조체 세팅
 		Fruit newFruit = { fruitType , newObj };
@@ -437,5 +458,14 @@ namespace EHEngine
 		Sprite* t = obj->GetComponent<Sprite>();
 		std::cout << t->GetBitmapInfo() << std::endl;
 		
+	}
+
+	void BoardManager::PlayAnimation()
+	{
+		for (GridIndex matchedFruit : m_fruitMatchedList)
+		{
+			Animator* animator = m_board->GetFruitAt(matchedFruit).gameObject->GetComponent<Animator>();
+			animator->Play();
+		}
 	}
 }

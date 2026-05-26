@@ -7,25 +7,23 @@ namespace EHEngine
 	Animator::Animator(GameObject* pOwner, GameApp* pGame) : Component(pOwner, pGame)
 	{
 		m_sprite = pOwner->GetComponent<Sprite>();
+		m_isEnabled = false;
 	}
 
 	void Animator::Update(float dT)
 	{
-		Timer += dT;
-		if (Timer >= m_frameTime)
-		{
-			Timer -= m_frameTime;
+		if (m_sprite == nullptr) return;
+		if (m_SpriteCount == 0) return;
 
-			// 스프라이트에 정보 전송
-			m_sprite->SetOffsetX(m_frameXY[m_spriteIndex].x);
-			m_sprite->SetOffsetY(m_frameXY[m_spriteIndex].y);
-			m_spriteIndex += 1;
-		}
+		m_Timer += dT;
+		if (m_Timer < m_frameTime) return;
+		m_Timer -= m_frameTime;
 
+		// 종료조건 확인
 		if (m_spriteIndex >= m_SpriteCount)
 		{
 			// 애니메이션 반복
-			if (isLoop)
+			if (m_isLoop)
 			{
 				m_spriteIndex = 0;
 			}
@@ -37,6 +35,11 @@ namespace EHEngine
 				return;
 			}
 		}
+
+		// 스프라이트에 정보 전송
+		m_sprite->SetOffsetX(m_frameXY[m_spriteIndex].x);
+		m_sprite->SetOffsetY(m_frameXY[m_spriteIndex].y);
+		m_spriteIndex++;
 	}
 
 	void Animator::Play()
@@ -52,15 +55,17 @@ namespace EHEngine
 			m_pSpriteBitmapInfo = m_sprite->GetBitmapInfo();
 		}
 
+		
+
 		// 스프라이트 시트 전송
-		m_sprite->SetSpriteSheetBitmapInfo(m_pSheetBitmapInfo, m_layout.spriteWidth, m_layout.spriteHeight);
+		m_sprite->SetBitmapInfo(m_pSheetBitmapInfo, m_layout.spriteWidth, m_layout.spriteHeight, m_frameXY[0].x, m_frameXY[0].y);
+
 		// 스프라이트 인덱스 초기화
-		m_spriteIndex = 0;
-		// 스프라이트에 정보 전송
-		m_sprite->SetOffsetX(m_frameXY[m_spriteIndex].x);
-		m_sprite->SetOffsetY(m_frameXY[m_spriteIndex].y);
+		m_spriteIndex = 1;
+
 		// 타이머 초기화
-		Timer = 0.0f;
+		m_Timer = 0.0f;
+
 		// 스프라이트에 전송 시작
 		m_isEnabled = true;
 	}
@@ -77,8 +82,8 @@ namespace EHEngine
 
 	void Animator::InitAnimationClip(renderHelp::BitmapInfo* pSheetBitmapInfo, const SpriteSheetLayout& layout)
 	{
-		// 스프라이트 시트가 등록되지 않았다면 리턴
-		if (m_pSpriteBitmapInfo == nullptr) return;
+		// 스프라이트 시트를 찾을 수 없다면 리턴
+		if (pSheetBitmapInfo == nullptr) return;
 
 		// 스프라이트 시트 등록
 		m_pSheetBitmapInfo = pSheetBitmapInfo;
@@ -111,6 +116,7 @@ namespace EHEngine
 		}
 
 		m_SpriteCount = static_cast<int>(m_frameXY.size());
+		
 	}
 
 

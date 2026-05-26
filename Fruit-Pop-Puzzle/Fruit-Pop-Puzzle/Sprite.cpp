@@ -19,11 +19,13 @@ namespace EHEngine
 		m_offsetY = 0;
 	}
 
-	void Sprite::SetSpriteSheetBitmapInfo(renderHelp::BitmapInfo* bitmapInfo, int spriteWidth, int spriteHeight)
+	void Sprite::SetBitmapInfo(renderHelp::BitmapInfo* bitmapInfo, int spriteWidth, int spriteHeight, int offsetX, int offsetY)
 	{
 		m_pBitmapInfo = bitmapInfo;
 		m_spriteWidth = spriteWidth;
 		m_spriteHeight = spriteHeight;
+		m_offsetX = offsetX;
+		m_offsetY = offsetY;
 	}
 
 	void Sprite::Render(HDC hdc)

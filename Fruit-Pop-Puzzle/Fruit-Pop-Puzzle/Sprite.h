@@ -16,8 +16,10 @@ namespace EHEngine
 
 		void SetBitmapInfo(renderHelp::BitmapInfo* bitmapInfo);
 		renderHelp::BitmapInfo* GetBitmapInfo() { return m_pBitmapInfo; }
-		void SetSpriteSheetBitmapInfo(renderHelp::BitmapInfo* bitmapInfo, int spriteWidth, int spriteHeight);
+		void SetBitmapInfo(renderHelp::BitmapInfo* bitmapInfo, int spriteWidth, int spriteHeight, int offsetX, int offsetY);
 
+		void SetSpriteWidth(int width) { m_spriteWidth = width; }
+		void SetSpriteHeight(int height) { m_spriteHeight = height; }
 		void SetOffsetX(int offsetX) { m_offsetX = offsetX; }
 		void SetOffsetY(int offsetY) { m_offsetY = offsetY; }
 
