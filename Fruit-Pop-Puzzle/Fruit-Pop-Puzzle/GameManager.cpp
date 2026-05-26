@@ -11,13 +11,13 @@ namespace EHEngine
 		{
 			800,
 			800,
-			94,
-			95,
-			6,
-			6,
-			102,
-			93,
-			6
+			69,
+			69,
+			8,
+			8,
+			115,
+			119,
+			3
 		};
 
 		
@@ -125,7 +125,7 @@ namespace EHEngine
 			{
 				std::cout << "매칭된 과일 있음" << std::endl;
 				m_gameState = GameState::DELAY;
-				m_reservedGameState = GameState::POP;
+				m_reservedGameState = GameState::POPANIMATION;
 			}
 
 			else
@@ -137,6 +137,14 @@ namespace EHEngine
 			}
 		}
 
+		else if (m_gameState == GameState::POPANIMATION)
+		{
+			m_boardManager->PlayAnimation();
+			m_gameState = GameState::DELAY;
+			m_reservedGameState = GameState::POP;
+			std::cout << "애니메이션 실행" << std::endl;
+		}
+
 		else if (m_gameState == GameState::POP)
 		{
 			m_boardManager->DeleteMatchedFruit();
@@ -144,14 +152,12 @@ namespace EHEngine
 			m_boardManager->InitFruitMatchedList();
 			std::cout << "매칭 벡터 초기화 완료" << std::endl;
 			
-
-			m_gameState = GameState::DELAY;
-			m_reservedGameState = GameState::DROP;
+			m_gameState = GameState::DROP;
 		}
 
 		else if (m_gameState == GameState::DROP)
 		{
-			m_boardManager->DropFruits();
+			m_boardManager->CheckDropFruit();
 			std::cout << "과일 드랍 완료" << std::endl;
 			m_gameState = GameState::DELAY;
 			m_reservedGameState = GameState::SPAWN;

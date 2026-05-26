@@ -23,6 +23,7 @@ namespace EHEngine
 			SELECTED_FIRST_CELL,
 			SWAP,
 			MATCH,
+			POPANIMATION,
 			POP,
 			DROP,
 			SPAWN,

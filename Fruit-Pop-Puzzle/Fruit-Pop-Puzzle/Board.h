@@ -13,6 +13,7 @@ namespace EHEngine
 		APPLE, // 0
 		BANANA, // 1
 		GRAPES, // 2
+		WATERMELON, // 3
 		COUNT // 과일 종류의 개수를 파악하기 위한 용도
 	};
 

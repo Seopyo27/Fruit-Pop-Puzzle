@@ -71,7 +71,6 @@ namespace EHEngine {
 		//*************************************************
 		//ют╥б
 		//************************************************* 
-
 		Input m_input = { Key::NONE, {0, 0} };
 		MOUSE_POS m_MousePos = { 0, 0 };
 		MOUSE_POS m_MousePosPrev = { 0, 0 };

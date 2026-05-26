@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -123,9 +123,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animator.cpp" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="BoardManager.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="FallingFruit.cpp" />
     <ClCompile Include="GameApp.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -139,9 +141,11 @@
     <ClCompile Include="Utillity.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animator.h" />
     <ClInclude Include="Board.h" />
     <ClInclude Include="BoardManager.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="FallingFruit.h" />
     <ClInclude Include="GameApp.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameObject.h" />

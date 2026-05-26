@@ -3,7 +3,8 @@
 #include "GameObject.h"
 #include "Transform.h"
 #include "Sprite.h"
-#include "GameApp.h"
+#include "FallingFruit.h"
+#include "Animator.h"
 #include <random>
 
 namespace EHEngine
@@ -45,16 +46,41 @@ namespace EHEngine
 		GameObject* newObj = m_pGame->CreateGameObject(); // 아 망했다. 키를 이름으로하니까 이런문제가.
 		Transform* transform = newObj->GetComponent<Transform>();
 
+		// Trasnform 추가
 		learning::Vector2f cellCenterPos = m_board->GetCellCenterPos(index);
 		transform->SetPosition( (m_pOwnerObj->GetComponent<Transform>()->GetPosition().x - m_board->GetBoardWidth() / 2) + cellCenterPos.x,
 			                    (m_pOwnerObj->GetComponent<Transform>()->GetPosition().y - m_board->GetBoardHeight() / 2) + cellCenterPos.y );
 		transform->SetWidth(80);
 		transform->SetHeight(80);
 
-		static const char* fruitNames[] = { "Apple", "Banana", "Grapes" };
+		static const char* fruitSpriteSheetNames[] = { "AppleSpriteSheet", "BananaSpriteSheet", "GrapesSpriteSheet", "WaterMelonSpriteSheet"};
 
+		std::cout << m_pGame->GetBitmapInfo("AppleSpriteSheet") << std::endl;
+		// Sprite 추가
 		Sprite* sprite = newObj->AddComponent<Sprite>();
-		sprite->SetBitmapInfo(m_pGame->GetBitmapInfo(fruitNames[fruitTypeNum]));
+		sprite->SetBitmapInfo(m_pGame->GetBitmapInfo(fruitSpriteSheetNames[fruitTypeNum]), 200, 200, 0, 0);
+
+		// FallingFruit 추가, 처음엔 움직이지 않음
+		newObj->AddComponent<FallingFruit>()->SetIsEnabled(false);
+
+		// Animator 추가
+		Animator* animator = newObj->AddComponent<Animator>();
+		SpriteSheetLayout sheetLayout =
+		{
+			2000,
+			200,
+			0,
+			0,
+			200,
+			200,
+			0,
+			0,
+			1,
+			10,
+			10
+		};
+
+		animator->InitAnimationClip(m_pGame->GetBitmapInfo(fruitSpriteSheetNames[fruitTypeNum]), sheetLayout);
 		
 		// 과일 구조체 세팅
 		Fruit newFruit = { fruitType , newObj };
@@ -82,29 +108,6 @@ namespace EHEngine
 
 		m_pGame->DestroyGameObject(fruit.gameObject->GetId());
 		m_board->DeleteFruit(index);
-	}
-
-	// from 에서 to로 과일을 옮깁니다.
-	// to에 이미 과일이 있다면 오브젝트를 삭제하고 데이터를 덮어씌웁니다.
-	void BoardManager::MoveFruit(const GridIndex& from, const GridIndex& to)
-	{
-		// 옮길 과일이 없다면 리턴
-		if (!m_board->ExistFruit(from)) return;
-
-		// to에 과일이 있다면 리턴
-		if (m_board->ExistFruit(to)) return;
-
-		// 트랜스폼 조회
-		GameObject* fruit = m_board->GetFruitAt(from).gameObject;
-		Transform* transform = fruit->GetComponent<Transform>();
-
-		// 트랜스폼 위치 이동
-		learning::Vector2f cellCenterPos = m_board->GetCellCenterPos(to);
-		transform->SetPosition( (m_pOwnerObj->GetComponent<Transform>()->GetPosition().x - m_board->GetBoardWidth() / 2) + cellCenterPos.x,
-								(m_pOwnerObj->GetComponent<Transform>()->GetPosition().y - m_board->GetBoardHeight() / 2) + cellCenterPos.y);
-
-		// m_board 과일 데이터 이동
-		m_board->MoveFruit(from, to);
 	}
 
 	void BoardManager::RefillAllFruit()
@@ -371,7 +374,7 @@ namespace EHEngine
 	}
 
 	// 과일들을 아래 빈공간으로 떨어뜨림
-	void BoardManager::DropFruits()
+	void BoardManager::CheckDropFruit()
 	{
 		// 1열, 2열, 3열.... 을 아래쪽->위쪽으로 순회
 		for (int col = 0; col < m_board->GetMaxCol(); col++)
@@ -386,7 +389,7 @@ namespace EHEngine
 					// 과일을 발견한 위치와 타겟 위치가 다르면, 타겟위치로 이동
 					if (row != targetRow)
 					{
-						MoveFruit({ row, col }, { targetRow, col });
+						DropFruit({ row, col }, { targetRow, col });
 					}
 
 					// 타겟위치 위로 이동
@@ -397,6 +400,31 @@ namespace EHEngine
 				// 그 위치로 이동시킬 수 있다.
 			}
 		}
+	}
+
+// from 에서 to로 과일을 떨어드립니다.
+// to에 이미 과일이 있다면 오브젝트를 삭제하고 데이터를 덮어씌웁니다.
+	void BoardManager::DropFruit(const GridIndex& from, const GridIndex& to)
+	{
+		// 옮길 과일이 없다면 리턴
+		if (!m_board->ExistFruit(from)) return;
+
+		// to에 과일이 있다면 리턴
+		if (m_board->ExistFruit(to)) return;
+		
+		// 타겟 위치 계산
+		learning::Vector2f cellCenterPos = m_board->GetCellCenterPos(to); // 그리드 좌표 계산
+		learning::Vector2f targetPos = { (m_pOwnerObj->GetComponent<Transform>()->GetPosition().x - m_board->GetBoardWidth() / 2) + cellCenterPos.x, // 월드 좌표 계산
+										 (m_pOwnerObj->GetComponent<Transform>()->GetPosition().y - m_board->GetBoardHeight() / 2) + cellCenterPos.y };
+
+		// 과일 떨어뜨리기 스크립트 실행
+		GameObject* fruit = m_board->GetFruitAt(from).gameObject;
+		FallingFruit* fallingFruit = fruit->GetComponent<FallingFruit>();
+		fallingFruit->SetTargetPos(targetPos);
+		fallingFruit->SetIsEnabled(true);
+
+		// m_board 과일 데이터 이동
+		m_board->MoveFruit(from, to);
 	}
 
 	void BoardManager::PrintBoard()
@@ -430,5 +458,14 @@ namespace EHEngine
 		Sprite* t = obj->GetComponent<Sprite>();
 		std::cout << t->GetBitmapInfo() << std::endl;
 		
+	}
+
+	void BoardManager::PlayAnimation()
+	{
+		for (GridIndex matchedFruit : m_fruitMatchedList)
+		{
+			Animator* animator = m_board->GetFruitAt(matchedFruit).gameObject->GetComponent<Animator>();
+			animator->Play();
+		}
 	}
 }
