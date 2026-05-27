@@ -1,5 +1,5 @@
 #pragma once
-#include "Component.h"
+#include "RenderableComponent.h"
 
 namespace renderHelp
 {
@@ -9,7 +9,7 @@ namespace EHEngine
 {
 	class Transform;
 
-	class Sprite : public Component
+	class Sprite : public RenderableComponent
 	{
 	public:
 		Sprite(GameObject* pOwner, GameApp* pGame);

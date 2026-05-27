@@ -54,6 +54,8 @@ namespace EHEngine
 		// 스프라이트 추가
 		Sprite* sprite = obj->AddComponent<Sprite>();
 		sprite->SetBitmapInfo(GetBitmapInfo("Board"));
+		// 렌더링 순서 제일 먼저
+		sprite->SetOrderInLayer(0);
 
 		// 보드 스크립트 테스트
 		obj->AddComponent<GameManager>();
@@ -207,25 +209,14 @@ namespace EHEngine
 		::PatBlt(m_hBackDC, 0, 0, m_width, m_height, WHITENESS);
 
 		//메모리 DC에 그리기
-
-		for (const auto& it : m_GameObjPtrTable[1]->GetComponents())
-		{
-			Component* comp = it.second;
-			comp->Render(m_hBackDC);
-		}
-
 		for (const auto& it : m_GameObjPtrTable)
 		{
-			if (it.first == 1) continue;
-
 			GameObject* obj = it.second;
 
 			if (obj == nullptr) continue;
 
-			for(const auto& jt : obj->GetComponents() )
+			for(const auto& comp : obj->GetRenderableComponents())
 			{
-				// Renderalbe 컴포넌트만 분리하는 것 필요.
-				Component* comp = jt.second;
 				comp->Render(m_hBackDC);
 			}
 		}

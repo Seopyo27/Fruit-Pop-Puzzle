@@ -2,6 +2,9 @@
 #include <unordered_map>
 #include <typeindex>
 #include <string>
+#include <type_traits>
+#include <algorithm>
+#include "RenderableComponent.h"
 
 namespace EHEngine
 {
@@ -32,6 +35,22 @@ namespace EHEngine
 
 			T* newComponent = new T(this, m_scene);
 			m_components[typeid(T)] = newComponent;
+
+			// 렌더블 컴포넌트는 렌더링을 위해 따로 관리
+			// <type_traits> 타입을 컴파일 타임에 검사
+			// constexpr - 컴파일 타임에 계산 가능한 값/ 함수
+			if constexpr (std::is_base_of_v<RenderableComponent, T>)
+			{
+				m_renderableComponents.push_back(newComponent);
+
+				// 순서대로 렌더링을 위해 정렬
+				std::sort(m_renderableComponents.begin(),
+					m_renderableComponents.end(),
+					[](RenderableComponent* a, RenderableComponent* b)
+					{
+						return a->GetOrderInLayer() < b->GetOrderInLayer();
+					});
+			}
 			return newComponent;
 		}
 
@@ -54,6 +73,11 @@ namespace EHEngine
 			return m_components;
 		}
 
+		const std::vector<RenderableComponent*>& GetRenderableComponents() const
+		{
+			return m_renderableComponents;
+		}
+
 		GameApp* GetScene() const
 		{
 			return m_scene;
@@ -63,6 +87,7 @@ namespace EHEngine
 		uint64_t m_id = 0;
 		std::string m_name = "NewObject";
 		std::unordered_map<std::type_index, Component*> m_components;
+		std::vector<RenderableComponent*> m_renderableComponents;
 		GameApp* m_scene = nullptr;
 	};
 
