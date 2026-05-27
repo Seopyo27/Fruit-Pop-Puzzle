@@ -126,6 +126,7 @@
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="BoardManager.cpp" />
+    <ClCompile Include="CellPointer.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="FallingFruit.cpp" />
     <ClCompile Include="GameApp.cpp" />
@@ -147,6 +148,7 @@
     <ClInclude Include="Animator.h" />
     <ClInclude Include="Board.h" />
     <ClInclude Include="BoardManager.h" />
+    <ClInclude Include="CellPointer.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="FallingFruit.h" />
     <ClInclude Include="GameApp.h" />

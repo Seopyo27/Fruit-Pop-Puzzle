@@ -81,6 +81,9 @@
     <ClCompile Include="ScoreText.cpp">
       <Filter>Scripts</Filter>
     </ClCompile>
+    <ClCompile Include="CellPointer.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameTimer.h">
@@ -141,6 +144,9 @@
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="ScoreText.h">
+      <Filter>Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="CellPointer.h">
       <Filter>Scripts</Filter>
     </ClInclude>
   </ItemGroup>

@@ -13,6 +13,7 @@ namespace EHEngine
 
 	private:
 		int m_orderInLayer = 0;
+		bool m_isVisible = true;
 	};
 }
 
