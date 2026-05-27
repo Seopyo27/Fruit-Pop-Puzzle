@@ -1,5 +1,6 @@
 #pragma once
 #include "Script.h"
+#include "Types.h"
 
 namespace EHEngine
 {

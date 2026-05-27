@@ -49,19 +49,6 @@ namespace EHEngine
 
 			
 			m_gameState = GameState::WAITING;
-			//char c;
-			//std::cin >> c;
-			//if (c == 'n')
-			//{
-			//	int x, y;
-			//	std::cin >> x >> y;
-			//	m_boardManager->PrintFruitBitmap({ y, x });
-			//}
-
-			//else
-			//{
-			//	
-			//}
 		}
 
 		else if (m_gameState == GameState::WAITING)
@@ -183,5 +170,38 @@ namespace EHEngine
 	{
 		m_score = min(m_score + (m_boardManager->GetMatchedFruitCount() * 100), 999999999);
 		NotifyScoreChanged();
+	}
+
+	bool GameManager::GetScreenPosCurrentPoint(SCREEN_POS& screenPos)
+	{
+		SCREEN_POS pos;
+		if (!m_boardManager->GetCellCenterScreenPosFromScreenPos(m_pGame->GetInput().mousePos, pos))
+		{
+			return false;
+		}
+		screenPos = pos;
+		return true;
+	}
+
+	bool GameManager::GetScreenPosFirstSelectedPoint(SCREEN_POS& screenPos)
+	{
+		SCREEN_POS pos;
+		if (!m_boardManager->GetCellCenterScreenPosFromGridIndex(m_firstSelected, pos))
+		{
+			return false;
+		}
+		screenPos = pos;
+		return true;
+	}
+
+	bool GameManager::GetScreenPosSecondSelectedPoint(SCREEN_POS& screenPos)
+	{
+		SCREEN_POS pos;
+		if (!m_boardManager->GetCellCenterScreenPosFromGridIndex(m_secondSelected, pos))
+		{
+			return false;
+		}
+		screenPos = pos;
+		return true;
 	}
 }

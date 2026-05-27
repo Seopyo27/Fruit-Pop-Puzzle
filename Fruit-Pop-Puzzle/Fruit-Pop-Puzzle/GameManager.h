@@ -2,6 +2,7 @@
 #include "Script.h"
 #include "Board.h"
 #include <functional>
+#include "Types.h"
 
 namespace EHEngine
 {
@@ -22,6 +23,10 @@ namespace EHEngine
 		{
 			scoreChangedCallbacks.push_back(callback);
 		}
+		
+		bool GetScreenPosCurrentPoint(SCREEN_POS& screenPos);
+		bool GetScreenPosFirstSelectedPoint(SCREEN_POS& screenPos);
+		bool GetScreenPosSecondSelectedPoint(SCREEN_POS& screenPos);
 
 	private:
 		enum class GameState

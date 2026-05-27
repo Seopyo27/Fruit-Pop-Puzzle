@@ -10,6 +10,8 @@
 #include "Text.h"
 #include "ScoreText.h"
 
+#include "CellPointer.h"
+
 namespace EHEngine
 {
 	bool GameApp::Initialize()
@@ -101,6 +103,24 @@ namespace EHEngine
 		
 		// 스코어 텍스트 스트립트
 		scoreText->AddComponent<ScoreText>();
+	
+
+
+		// 마우스 포인터
+		GameObject* mousePointer = CreateGameObject();
+		mousePointer->SetName("CurrentCellPointer");
+		Transform* MPtransform = mousePointer->GetComponent<Transform>();
+		MPtransform->SetWidth(80);
+		MPtransform->SetHeight(80);
+	
+		//스프라이트 추가
+		Sprite* MPsprite = mousePointer->AddComponent<Sprite>();
+		MPsprite->SetBitmapInfo(GetBitmapInfo("MousePointer"));
+		MPsprite->SetOrderInLayer(1);
+		MPsprite->SetIsVisible(false);
+
+
+		mousePointer->AddComponent<CellPointer>();
 
 		return true;
 	}
@@ -258,6 +278,7 @@ namespace EHEngine
 
 			for(const auto& comp : obj->GetRenderableComponents())
 			{
+				if (!comp->GetIsVisible()) continue;
 				comp->Render(m_hBackDC);
 			}
 		}
@@ -323,6 +344,9 @@ namespace EHEngine
 		AddBitmapInfo("BananaSpriteSheet", L"./Resource/BananaSpriteSheet.png");
 		AddBitmapInfo("GrapesSpriteSheet", L"./Resource/GrapesSpriteSheet.png");
 		AddBitmapInfo("WaterMelonSpriteSheet", L"./Resource/WaterMelonSpriteSheet.png");
+
+		//마우스 포인터
+		AddBitmapInfo("MousePointer", L"./Resource/MousePointer.png");
 	}
 
 	GameObject* GameApp::CreateGameObject()

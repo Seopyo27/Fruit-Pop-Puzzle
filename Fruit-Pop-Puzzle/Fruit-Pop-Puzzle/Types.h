@@ -1,16 +1,19 @@
 #pragma once
 namespace EHEngine
 {
-    struct MOUSE_POS
-    {
-        int x = 0;
-        int y = 0;
+	struct POS
+	{
+		int x = 0;
+		int y = 0;
 
-        bool operator!=(const MOUSE_POS& other) const
-        {
-            return (x != other.x || y != other.y);
-        }
-    };
+		bool operator!=(const POS& other) const
+		{
+			return (x != other.x || y != other.y);
+		}
+	};
+
+	using MOUSE_POS = POS;
+	using SCREEN_POS = POS;
 
 	struct BoardLayout
 	{
