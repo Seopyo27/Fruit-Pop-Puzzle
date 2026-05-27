@@ -31,6 +31,7 @@ namespace EHEngine
 
 		void InitFruitMatchedList();
 		bool ExistMatchedFruit();
+		int GetMatchedFruitCount();
 
 		void PlayAnimation();
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "Script.h"
 #include "Board.h"
+#include <functional>
 
 namespace EHEngine
 {
@@ -9,10 +10,18 @@ namespace EHEngine
 	class GameManager : public Script
 	{
 	public:
+		// 델리게이터를 만들기 위한 데이터 형 선언
+		using ScoreChangedCallback = std::function<void(int)>;
+
 		GameManager(GameObject* pOwner, GameApp* game) : Script(pOwner, game) {}
 
 		void Start() override;
 		void Update(float dT) override;
+		void AddScore(int amount);
+		void BindScoreChanged(ScoreChangedCallback callback)
+		{
+			scoreChangedCallbacks.push_back(callback);
+		}
 
 	private:
 		enum class GameState
@@ -40,6 +49,23 @@ namespace EHEngine
 		
 		GridIndex m_firstSelected = { -1, -1 };
 		GridIndex m_secondSelected = { -1, -1 };
+
+		// 점수
+		int m_score = 0;
+
+		// 델리게이터
+		std::vector<ScoreChangedCallback> scoreChangedCallbacks;
+
+		// 델리게이터 순회, 콜백
+		void NotifyScoreChanged()
+		{
+			for (auto& callback : scoreChangedCallbacks)
+			{
+				callback(m_score);
+			}
+		}
+
+
 	};
 
 }

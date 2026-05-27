@@ -147,6 +147,10 @@ namespace EHEngine
 
 		else if (m_gameState == GameState::POP)
 		{
+			// 점수 카운팅
+			AddScore(m_boardManager->GetMatchedFruitCount());
+			std::cout << "점수 합산 완료." << std::endl;
+
 			m_boardManager->DeleteMatchedFruit();
 			std::cout << "과일 팝 완료." << std::endl;
 			m_boardManager->InitFruitMatchedList();
@@ -173,5 +177,11 @@ namespace EHEngine
 			m_boardManager->PrintBoard();
 		}
 
+	}
+	
+	void GameManager::AddScore(int amount)
+	{
+		m_score = min(m_score + (m_boardManager->GetMatchedFruitCount() * 100), 999999999);
+		NotifyScoreChanged();
 	}
 }

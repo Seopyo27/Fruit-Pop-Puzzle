@@ -5,9 +5,10 @@
 #include "RenderHelp.h"
 #include "GameManager.h"
 
-//임시
 #include "Sprite.h"
 #include "Transform.h"
+#include "Text.h"
+#include "ScoreText.h"
 
 namespace EHEngine
 {
@@ -57,9 +58,49 @@ namespace EHEngine
 		// 렌더링 순서 제일 먼저
 		sprite->SetOrderInLayer(0);
 
-		// 보드 스크립트 테스트
+		// 보드 스크립트
 		obj->AddComponent<GameManager>();
 
+
+		// 스코어 보드
+		GameObject* scoreBoard = CreateGameObject();
+		scoreBoard->SetName("ScoreBoard");
+		Transform* SBtransform = scoreBoard->GetComponent<Transform>();
+		SBtransform->SetWidth(400);
+		SBtransform->SetHeight(102);
+		SBtransform->SetPosition(400, 70);
+
+		// 스프라이트 추가
+		Sprite* SBsprite = scoreBoard->AddComponent<Sprite>();
+		SBsprite->SetBitmapInfo(GetBitmapInfo("ScoreBoard"));
+		SBsprite->SetOrderInLayer(1);
+
+		// 점수 텍스트
+		GameObject* scoreText = CreateGameObject();
+		scoreText->SetName("ScoreText");
+		Transform* STtransform = scoreText->GetComponent<Transform>();
+		STtransform->SetPosition(320, 55);
+
+		// 텍스트 추가
+		Text* text = scoreText->AddComponent<Text>();
+		text->SetText(L"000000000");
+		text->SetFont(
+			CreateFont(
+				50, 0, 0, 0,
+				FW_BOLD,
+				FALSE, FALSE, FALSE,
+				DEFAULT_CHARSET,
+				OUT_DEFAULT_PRECIS,
+				CLIP_DEFAULT_PRECIS,
+				DEFAULT_QUALITY,
+				DEFAULT_PITCH | FF_DONTCARE,
+				L"Arial"
+			)
+		);
+		text->SetOrderInLayer(2);
+		
+		// 스코어 텍스트 스트립트
+		scoreText->AddComponent<ScoreText>();
 
 		return true;
 	}
@@ -271,7 +312,13 @@ namespace EHEngine
 
 	void GameApp::LoadResource()
 	{
+		// 보드
 		AddBitmapInfo("Board", L"./Resource/Board.png");
+
+		// 스코어 보드
+		AddBitmapInfo("ScoreBoard", L"./Resource/ScoreBoard.png");
+
+		// 과일
 		AddBitmapInfo("AppleSpriteSheet", L"./Resource/AppleSpriteSheet.png");
 		AddBitmapInfo("BananaSpriteSheet", L"./Resource/BananaSpriteSheet.png");
 		AddBitmapInfo("GrapesSpriteSheet", L"./Resource/GrapesSpriteSheet.png");
@@ -348,6 +395,20 @@ namespace EHEngine
 		auto it = m_pBitmapInfoTable.find(bitMapName);
 		if (it == m_pBitmapInfoTable.end()) return nullptr;
 		return it->second;
+	}
+	
+	// 이름으로 게임 오브젝트를 찾습니다.
+	GameObject* GameApp::FindGameObjectByName(std::string name)
+	{
+		for (auto it : m_GameObjPtrTable)
+		{
+			if (name == it.second->GetName())
+			{
+				return it.second;
+			}
+		}
+
+		return nullptr;
 	}
 
 }

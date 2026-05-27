@@ -136,8 +136,10 @@
     <ClCompile Include="NzWndBase.cpp" />
     <ClCompile Include="RenderableComponent.cpp" />
     <ClCompile Include="RenderHelp.cpp" />
+    <ClCompile Include="ScoreText.cpp" />
     <ClCompile Include="Script.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="Text.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Utillity.cpp" />
   </ItemGroup>
@@ -155,8 +157,10 @@
     <ClInclude Include="NzWndBase.h" />
     <ClInclude Include="RenderableComponent.h" />
     <ClInclude Include="RenderHelp.h" />
+    <ClInclude Include="ScoreText.h" />
     <ClInclude Include="Script.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="Text.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="Utillity.h" />

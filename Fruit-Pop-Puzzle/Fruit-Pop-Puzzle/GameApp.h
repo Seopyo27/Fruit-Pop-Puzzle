@@ -42,6 +42,7 @@ namespace EHEngine {
 		bool AddGameObject(GameObject* obj);
 		GameObject* CreateGameObject();
 		bool DestroyGameObject(uint64_t id);
+		GameObject* FindGameObjectByName(std::string name);
 
 		renderHelp::BitmapInfo* GetBitmapInfo(std::string bitMapName);
 
