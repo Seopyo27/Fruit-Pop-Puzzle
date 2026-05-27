@@ -72,6 +72,9 @@
     <ClCompile Include="Animator.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="RenderableComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameTimer.h">
@@ -123,6 +126,9 @@
       <Filter>Scripts</Filter>
     </ClInclude>
     <ClInclude Include="Animator.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderableComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>

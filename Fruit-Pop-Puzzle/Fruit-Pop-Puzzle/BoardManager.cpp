@@ -59,6 +59,8 @@ namespace EHEngine
 		// Sprite 추가
 		Sprite* sprite = newObj->AddComponent<Sprite>();
 		sprite->SetBitmapInfo(m_pGame->GetBitmapInfo(fruitSpriteSheetNames[fruitTypeNum]), 200, 200, 0, 0);
+		// 렌더링 순서 보드(0) 다음
+		sprite->SetOrderInLayer(1);
 
 		// FallingFruit 추가, 처음엔 움직이지 않음
 		newObj->AddComponent<FallingFruit>()->SetIsEnabled(false);

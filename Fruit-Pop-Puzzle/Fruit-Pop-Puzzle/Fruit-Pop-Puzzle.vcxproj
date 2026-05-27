@@ -134,6 +134,7 @@
     <ClCompile Include="GameTimer.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="NzWndBase.cpp" />
+    <ClCompile Include="RenderableComponent.cpp" />
     <ClCompile Include="RenderHelp.cpp" />
     <ClCompile Include="Script.cpp" />
     <ClCompile Include="Sprite.cpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="GameTimer.h" />
     <ClInclude Include="INC_Windows.h" />
     <ClInclude Include="NzWndBase.h" />
+    <ClInclude Include="RenderableComponent.h" />
     <ClInclude Include="RenderHelp.h" />
     <ClInclude Include="Script.h" />
     <ClInclude Include="Sprite.h" />

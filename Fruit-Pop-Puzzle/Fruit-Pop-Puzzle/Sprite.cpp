@@ -5,7 +5,7 @@
 
 namespace EHEngine
 {
-	Sprite::Sprite(GameObject* pOwner, GameApp* pGame) : Component(pOwner, pGame)
+	Sprite::Sprite(GameObject* pOwner, GameApp* pGame) : RenderableComponent(pOwner, pGame)
 	{
 		m_pTransform = pOwner->GetComponent<Transform>();
 	}
