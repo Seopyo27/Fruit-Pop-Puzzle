@@ -5,6 +5,7 @@ namespace renderHelp
 {
 	class BitmapInfo;
 }
+
 namespace EHEngine
 {
 	class Transform;

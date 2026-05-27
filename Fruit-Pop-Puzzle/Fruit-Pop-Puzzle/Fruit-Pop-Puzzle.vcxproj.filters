@@ -75,6 +75,12 @@
     <ClCompile Include="RenderableComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="Text.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ScoreText.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameTimer.h">
@@ -130,6 +136,12 @@
     </ClInclude>
     <ClInclude Include="RenderableComponent.h">
       <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Text.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ScoreText.h">
+      <Filter>Scripts</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
