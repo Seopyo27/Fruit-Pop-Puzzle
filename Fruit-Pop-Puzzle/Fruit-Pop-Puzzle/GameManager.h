@@ -8,6 +8,21 @@ namespace EHEngine
 {
 	class BoardManager;
 
+	enum class GameState
+	{
+		NONE,
+		INITIALIZE,
+		WAITING,
+		SELECTED_FIRST_CELL,
+		SWAP,
+		MATCH,
+		POPANIMATION,
+		POP,
+		DROP,
+		SPAWN,
+		DELAY
+	};
+
 	class GameManager : public Script
 	{
 	public:
@@ -28,22 +43,9 @@ namespace EHEngine
 		bool GetScreenPosFirstSelectedPoint(SCREEN_POS& screenPos);
 		bool GetScreenPosSecondSelectedPoint(SCREEN_POS& screenPos);
 
-	private:
-		enum class GameState
-		{
-			NONE,
-			INITIALIZE,
-			WAITING,
-			SELECTED_FIRST_CELL,
-			SWAP,
-			MATCH,
-			POPANIMATION,
-			POP,
-			DROP,
-			SPAWN,
-			DELAY
-		};
 
+		GameState GetGameState() { return m_gameState; }
+	private:
 		BoardManager* m_boardManager = nullptr;
 
 		GameState m_gameState = GameState::INITIALIZE;
@@ -69,6 +71,8 @@ namespace EHEngine
 				callback(m_score);
 			}
 		}
+
+		bool m_isCombo = false;
 
 
 	};

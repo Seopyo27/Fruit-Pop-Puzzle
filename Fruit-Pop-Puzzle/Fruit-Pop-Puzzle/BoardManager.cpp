@@ -55,12 +55,11 @@ namespace EHEngine
 
 		static const char* fruitSpriteSheetNames[] = { "AppleSpriteSheet", "BananaSpriteSheet", "GrapesSpriteSheet", "WaterMelonSpriteSheet"};
 
-		std::cout << m_pGame->GetBitmapInfo("AppleSpriteSheet") << std::endl;
 		// Sprite 추가
 		Sprite* sprite = newObj->AddComponent<Sprite>();
 		sprite->SetBitmapInfo(m_pGame->GetBitmapInfo(fruitSpriteSheetNames[fruitTypeNum]), 200, 200, 0, 0);
 		// 렌더링 순서
-		sprite->SetOrderInLayer(2);
+		sprite->SetOrderInLayer(1);
 
 		// FallingFruit 추가, 처음엔 움직이지 않음
 		newObj->AddComponent<FallingFruit>()->SetIsEnabled(false);
