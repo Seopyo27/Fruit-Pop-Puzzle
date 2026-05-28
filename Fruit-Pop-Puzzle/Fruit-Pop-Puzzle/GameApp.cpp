@@ -10,6 +10,8 @@
 #include "Text.h"
 #include "ScoreText.h"
 
+#include "CellPointer.h"
+
 namespace EHEngine
 {
 	bool GameApp::Initialize()
@@ -73,7 +75,7 @@ namespace EHEngine
 		// 스프라이트 추가
 		Sprite* SBsprite = scoreBoard->AddComponent<Sprite>();
 		SBsprite->SetBitmapInfo(GetBitmapInfo("ScoreBoard"));
-		SBsprite->SetOrderInLayer(1);
+		SBsprite->SetOrderInLayer(2);
 
 		// 점수 텍스트
 		GameObject* scoreText = CreateGameObject();
@@ -97,10 +99,59 @@ namespace EHEngine
 				L"Arial"
 			)
 		);
-		text->SetOrderInLayer(2);
+		text->SetOrderInLayer(3);
 		
+
+
+		// 첫번째 선택 포인터
+		GameObject* FirstSelectedCellPointer = CreateGameObject();
+		FirstSelectedCellPointer->SetName("FirstSelectedCellPointer");
+		Transform* FStransform = FirstSelectedCellPointer->GetComponent<Transform>();
+		FStransform->SetWidth(75);
+		FStransform->SetHeight(75);
+
+		Sprite* FSsprite = FirstSelectedCellPointer->AddComponent<Sprite>();
+		FSsprite->SetBitmapInfo(GetBitmapInfo("SelectedPointer"));
+		FSsprite->SetOrderInLayer(2);
+		FSsprite->SetIsVisible(false);
+
+		// 두번째 선택 포인터
+		GameObject* SecondSelectedCellPointer = CreateGameObject();
+		SecondSelectedCellPointer->SetName("SecondSelectedCellPointer");
+		Transform* SStransform = SecondSelectedCellPointer->GetComponent<Transform>();
+		SStransform->SetWidth(75);
+		SStransform->SetHeight(75);
+
+		Sprite* SSsprite = SecondSelectedCellPointer->AddComponent<Sprite>();
+		SSsprite->SetBitmapInfo(GetBitmapInfo("SelectedPointer"));
+		SSsprite->SetOrderInLayer(2);
+		SSsprite->SetIsVisible(false);
+
+
 		// 스코어 텍스트 스트립트
 		scoreText->AddComponent<ScoreText>();
+
+
+
+		// 마우스 포인터
+		GameObject* CurrentCellPointer = CreateGameObject();
+		CurrentCellPointer->SetName("CurrentCellPointer");
+		Transform* MPtransform = CurrentCellPointer->GetComponent<Transform>();
+		MPtransform->SetWidth(80);
+		MPtransform->SetHeight(80);
+
+		//스프라이트 추가
+		Sprite* MPsprite = CurrentCellPointer->AddComponent<Sprite>();
+		MPsprite->SetBitmapInfo(GetBitmapInfo("MousePointer"));
+		MPsprite->SetOrderInLayer(0);
+		MPsprite->SetIsVisible(false);
+
+		CurrentCellPointer->AddComponent<CellPointer>();
+
+
+
+
+
 
 		return true;
 	}
@@ -258,6 +309,7 @@ namespace EHEngine
 
 			for(const auto& comp : obj->GetRenderableComponents())
 			{
+				if (!comp->GetIsVisible()) continue;
 				comp->Render(m_hBackDC);
 			}
 		}
@@ -323,6 +375,10 @@ namespace EHEngine
 		AddBitmapInfo("BananaSpriteSheet", L"./Resource/BananaSpriteSheet.png");
 		AddBitmapInfo("GrapesSpriteSheet", L"./Resource/GrapesSpriteSheet.png");
 		AddBitmapInfo("WaterMelonSpriteSheet", L"./Resource/WaterMelonSpriteSheet.png");
+
+		//마우스 포인터
+		AddBitmapInfo("MousePointer", L"./Resource/MousePointer.png");
+		AddBitmapInfo("SelectedPointer", L"./Resource/SelectedPointer.png");
 	}
 
 	GameObject* GameApp::CreateGameObject()

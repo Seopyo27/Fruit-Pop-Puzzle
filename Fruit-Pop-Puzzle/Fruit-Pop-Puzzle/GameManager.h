@@ -2,10 +2,26 @@
 #include "Script.h"
 #include "Board.h"
 #include <functional>
+#include "Types.h"
 
 namespace EHEngine
 {
 	class BoardManager;
+
+	enum class GameState
+	{
+		NONE,
+		INITIALIZE,
+		WAITING,
+		SELECTED_FIRST_CELL,
+		SWAP,
+		MATCH,
+		POPANIMATION,
+		POP,
+		DROP,
+		SPAWN,
+		DELAY
+	};
 
 	class GameManager : public Script
 	{
@@ -22,23 +38,14 @@ namespace EHEngine
 		{
 			scoreChangedCallbacks.push_back(callback);
 		}
+		
+		bool GetScreenPosCurrentPoint(SCREEN_POS& screenPos);
+		bool GetScreenPosFirstSelectedPoint(SCREEN_POS& screenPos);
+		bool GetScreenPosSecondSelectedPoint(SCREEN_POS& screenPos);
 
+
+		GameState GetGameState() { return m_gameState; }
 	private:
-		enum class GameState
-		{
-			NONE,
-			INITIALIZE,
-			WAITING,
-			SELECTED_FIRST_CELL,
-			SWAP,
-			MATCH,
-			POPANIMATION,
-			POP,
-			DROP,
-			SPAWN,
-			DELAY
-		};
-
 		BoardManager* m_boardManager = nullptr;
 
 		GameState m_gameState = GameState::INITIALIZE;
@@ -64,6 +71,8 @@ namespace EHEngine
 				callback(m_score);
 			}
 		}
+
+		bool m_isCombo = false;
 
 
 	};

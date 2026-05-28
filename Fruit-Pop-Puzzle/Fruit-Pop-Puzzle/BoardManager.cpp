@@ -55,12 +55,11 @@ namespace EHEngine
 
 		static const char* fruitSpriteSheetNames[] = { "AppleSpriteSheet", "BananaSpriteSheet", "GrapesSpriteSheet", "WaterMelonSpriteSheet"};
 
-		std::cout << m_pGame->GetBitmapInfo("AppleSpriteSheet") << std::endl;
 		// Sprite 추가
 		Sprite* sprite = newObj->AddComponent<Sprite>();
 		sprite->SetBitmapInfo(m_pGame->GetBitmapInfo(fruitSpriteSheetNames[fruitTypeNum]), 200, 200, 0, 0);
 		// 렌더링 순서
-		sprite->SetOrderInLayer(2);
+		sprite->SetOrderInLayer(1);
 
 		// FallingFruit 추가, 처음엔 움직이지 않음
 		newObj->AddComponent<FallingFruit>()->SetIsEnabled(false);
@@ -150,14 +149,14 @@ namespace EHEngine
 	}
 
 
-	bool BoardManager::GetGridIndexFromScreenPos(const MOUSE_POS& mousePos, GridIndex& gridIndex)
+	bool BoardManager::GetGridIndexFromScreenPos(const POS& mousePos, GridIndex& gridIndex)
 	{
 		// 스크린 좌표 -> 보드 좌표
-		MOUSE_POS boardPos;
+		POS boardPos;
 		if (!GetPosScreenToBoard(mousePos, boardPos))
 		{
 			// 보드 이미지 밖
-			std::cout << "보드 이미지 밖 입니다." << std::endl;
+			//std::cout << "보드 이미지 밖 입니다." << std::endl;
 			return false;
 		}
 
@@ -165,14 +164,14 @@ namespace EHEngine
 		if (!GetGridIndexFromBoardPos(boardPos, gridIndex))
 		{
 			// 보드 이미지 안이지만 셀 범위 밖
-			std::cout << "보드 이미지 안이지만 그리드 범위 밖 입니다." << std::endl;
+			//std::cout << "보드 이미지 안이지만 그리드 범위 밖 입니다." << std::endl;
 			return false;
 		}
 
 		return true;
 	}
 
-	bool BoardManager::GetPosScreenToBoard(const MOUSE_POS& mousePos, MOUSE_POS& boardPos)
+	bool BoardManager::GetPosScreenToBoard(const POS& mousePos, POS& boardPos)
 	{
 		// 화면에서 보드 시작점 계산
 		int boardStartX = m_pOwnerObj->GetComponent<Transform>()->GetPosition().x - (m_board->GetBoardWidth() / 2);
@@ -191,7 +190,7 @@ namespace EHEngine
 		return true;
 	}
 
-	bool BoardManager::GetGridIndexFromBoardPos(const MOUSE_POS& boardPos, GridIndex& gridIndex)
+	bool BoardManager::GetGridIndexFromBoardPos(const POS& boardPos, GridIndex& gridIndex)
 	{
 		// 그리드 범위 밖을 클릭했다면 false
 		if ((boardPos.x < m_board->GetGridOffsetX() || (m_board->GetGridOffsetX() + m_board->GetGridWidth()) <= boardPos.x) ||
@@ -475,4 +474,44 @@ namespace EHEngine
 	{
 		return m_fruitMatchedList.size();
 	}
+
+	bool BoardManager::GetCellCenterScreenPosFromScreenPos(const POS& mousePos, SCREEN_POS& screenPos)
+	{
+		GridIndex index;
+		// 마우스가 그리드를 클릭했는가?
+		if (!GetGridIndexFromScreenPos(mousePos, index))
+		{
+			return false;
+		}
+
+		// 그리드->보드좌표계 그리드 센터위치 변환
+		learning::Vector2f cellCenterPos = m_board->GetCellCenterPos(index);
+		learning::Vector2f pos = m_pOwnerObj->GetComponent<Transform>()->GetPosition();
+
+		// 스크린 좌표계 변환
+		screenPos.x = static_cast<int>(
+			(pos.x - m_board->GetBoardWidth() / 2) + cellCenterPos.x);
+
+		screenPos.y = static_cast<int>(
+			(pos.y - m_board->GetBoardHeight() / 2) + cellCenterPos.y);
+
+		return true;
+	}
+
+	bool BoardManager::GetCellCenterScreenPosFromGridIndex(const GridIndex& gridIndex, SCREEN_POS& screenPos)
+	{
+		// 그리드->보드좌표계 그리드 센터위치 변환
+		learning::Vector2f cellCenterPos = m_board->GetCellCenterPos(gridIndex);
+		learning::Vector2f pos = m_pOwnerObj->GetComponent<Transform>()->GetPosition();
+
+		// 스크린 좌표계 변환
+		screenPos.x = static_cast<int>(
+			(pos.x - m_board->GetBoardWidth() / 2) + cellCenterPos.x);
+
+		screenPos.y = static_cast<int>(
+			(pos.y - m_board->GetBoardHeight() / 2) + cellCenterPos.y);
+
+		return true;
+	}
+
 }

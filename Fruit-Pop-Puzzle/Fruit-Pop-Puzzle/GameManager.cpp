@@ -43,25 +43,14 @@ namespace EHEngine
 			m_firstSelected = { -1, -1 };
 			m_secondSelected = { -1, -1 };
 
+			m_isCombo = false;
+
 			std::cout << std::endl;
 			std::cout << std::endl;
 			std::cout << "초기화 완료 턴 진행 시작" << std::endl;
 
 			
 			m_gameState = GameState::WAITING;
-			//char c;
-			//std::cin >> c;
-			//if (c == 'n')
-			//{
-			//	int x, y;
-			//	std::cin >> x >> y;
-			//	m_boardManager->PrintFruitBitmap({ y, x });
-			//}
-
-			//else
-			//{
-			//	
-			//}
 		}
 
 		else if (m_gameState == GameState::WAITING)
@@ -114,7 +103,8 @@ namespace EHEngine
 		{
 			m_boardManager->SwapFruit(m_firstSelected, m_secondSelected);
 			std::cout << "셀 스왑 완료" << std::endl;
-			m_gameState = GameState::MATCH;
+			m_gameState = GameState::DELAY;
+			m_reservedGameState = GameState::MATCH;
 		}
 
 		else if (m_gameState == GameState::MATCH)
@@ -131,9 +121,19 @@ namespace EHEngine
 			else
 			{
 				std::cout << "매칭된 과일 없음" << std::endl;
-				//m_boardManager->SwapFruit(m_secondSelected, m_firstSelected);
-				//std::cout << "과일 재스왑 완료" << std::endl;
-				m_gameState = GameState::INITIALIZE;
+
+				if (!m_isCombo)
+				{
+					m_boardManager->SwapFruit(m_secondSelected, m_firstSelected);
+					std::cout << "과일 재스왑 완료" << std::endl;
+					m_gameState = GameState::DELAY;
+					m_reservedGameState = GameState::INITIALIZE;
+				}
+
+				else
+				{
+					m_gameState = GameState::INITIALIZE;
+				}
 			}
 		}
 
@@ -172,6 +172,7 @@ namespace EHEngine
 			m_boardManager->FillFruitEmptySpaces();
 			std::cout << "빈 공간 과일 재 생성 완료" << std::endl;
 			m_gameState = GameState::MATCH;
+			m_isCombo = true;
 			std::cout << std::endl;
 			std::cout << std::endl;
 			m_boardManager->PrintBoard();
@@ -183,5 +184,38 @@ namespace EHEngine
 	{
 		m_score = min(m_score + (m_boardManager->GetMatchedFruitCount() * 100), 999999999);
 		NotifyScoreChanged();
+	}
+
+	bool GameManager::GetScreenPosCurrentPoint(SCREEN_POS& screenPos)
+	{
+		SCREEN_POS pos;
+		if (!m_boardManager->GetCellCenterScreenPosFromScreenPos(m_pGame->GetInput().mousePos, pos))
+		{
+			return false;
+		}
+		screenPos = pos;
+		return true;
+	}
+
+	bool GameManager::GetScreenPosFirstSelectedPoint(SCREEN_POS& screenPos)
+	{
+		SCREEN_POS pos;
+		if (!m_boardManager->GetCellCenterScreenPosFromGridIndex(m_firstSelected, pos))
+		{
+			return false;
+		}
+		screenPos = pos;
+		return true;
+	}
+
+	bool GameManager::GetScreenPosSecondSelectedPoint(SCREEN_POS& screenPos)
+	{
+		SCREEN_POS pos;
+		if (!m_boardManager->GetCellCenterScreenPosFromGridIndex(m_secondSelected, pos))
+		{
+			return false;
+		}
+		screenPos = pos;
+		return true;
 	}
 }

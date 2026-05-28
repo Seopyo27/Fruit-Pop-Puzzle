@@ -37,9 +37,11 @@ namespace EHEngine
 
 		void DeleteMatchedFruit();
 
-		bool GetGridIndexFromScreenPos(const MOUSE_POS& mousePos, GridIndex& gridIndex);
-		bool GetPosScreenToBoard(const MOUSE_POS& mousePos, MOUSE_POS& boardPos);
-		bool GetGridIndexFromBoardPos(const MOUSE_POS& boardPos, GridIndex& gridIndex);
+		bool GetGridIndexFromScreenPos(const POS& mousePos, GridIndex& gridIndex);
+		bool GetPosScreenToBoard(const POS& mousePos, POS& boardPos);
+		bool GetGridIndexFromBoardPos(const POS& boardPos, GridIndex& gridIndex);
+		bool GetCellCenterScreenPosFromScreenPos(const POS& mousePos, SCREEN_POS& screenPos);
+		bool GetCellCenterScreenPosFromGridIndex(const GridIndex& gridIndex, SCREEN_POS& screenPos);
 
 		void PrintBoard();
 		void PrintMatchedList();
