@@ -182,11 +182,11 @@ namespace EHEngine
 				}
 				else if (m_comboCount == 4)
 				{
-					m_comboEffect->ShowComboEffect("Parrot", { 130, 700 } , { 220, 660 }, 1000.0f, "Awesome");
+					m_comboEffect->ShowComboEffect("Parrot", { 130, 700 } , { 200, 660 }, 1000.0f, "Awesome");
 				}
 				else if (m_comboCount == 5)
 				{
-					m_comboEffect->ShowComboEffect("Hippo", { 580, 720 }, { 580, 660 }, 1000.0f, "Fantastic");
+					m_comboEffect->ShowComboEffect("Hippo", { 610, 720 }, { 610, 660 }, 1000.0f, "Fantastic");
 				}
 				else if (m_comboCount >= 6)
 				{
@@ -203,7 +203,7 @@ namespace EHEngine
 			//************************************************* 
 			else if (m_gameState == GameState::POP)
 			{
-				AddScore(m_boardManager->GetMatchedFruitCount() * m_comboCount); 
+				AddScore(m_boardManager->GetMatchedFruitCount() * 100 * (m_comboCount * m_comboCount)); 
 				m_boardManager->DeleteMatchedFruit();
 				m_boardManager->InitFruitMatchedList();
 				m_gameState = GameState::DELAY;
@@ -235,7 +235,7 @@ namespace EHEngine
 
 		void AddScore(int amount)
 		{
-			m_score = (std::min)(m_score + (amount * 100), 999999999);
+			m_score = (std::min)(m_score + amount, 999999999);
 			NotifyScoreChanged();
 		}
 

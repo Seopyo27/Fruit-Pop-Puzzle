@@ -151,8 +151,8 @@ namespace EHEngine
 			cTObj->SetName("ComboText");
 			Transform* cTTransform = cTObj->GetComponent<Transform>();
 			cTTransform->SetPosition({ 400, 400 });
-			cTTransform->SetWidth(500);
-			cTTransform->SetHeight(200);
+			cTTransform->SetWidth(300);
+			cTTransform->SetHeight(120);
 			SpriteRenderer* cTSprite = cTObj->AddComponent<SpriteRenderer>();
 			cTSprite->SetOrderInLayer(OrderInLayer::ComboText);
 			cTSprite->SetIsVisible(false);
